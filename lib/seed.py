@@ -1,7 +1,7 @@
 from models.user import User
 from models.plant import Plant
 from models.action import Action
-from helpers import console #! FROM RICH 
+# from helpers import console #! FROM RICH 
 
 def drop_table():
     pass

@@ -1,3 +1,4 @@
+from models.__init__ import CONN, CURSOR
 class User:
     def __init__(self, name, id=None):
         self.name = name
@@ -21,3 +22,8 @@ class User:
             self._name = new_name
 
 #!Association Methods
+
+#! ORM class methods
+@classmethod
+def create_table(cls):
+    CURSOR.execute

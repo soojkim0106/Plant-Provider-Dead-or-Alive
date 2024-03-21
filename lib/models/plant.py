@@ -1,12 +1,17 @@
+import random
 class Plant:
     
     all = []
+    phase = ["Seed", "Bud", "Sapling", "Flower"]
 
-    def __init__(self, name, phase, condition, id=None):
+    def __init__(self, name, id=None):
         self.name = name
-        self.phase = phase
-        self.condition = condition
+        self._condition = self._random_condition()
+        self._phase = 'Seed'
         self.id = id
+        
+    def __repr__(self):
+        return f"<Plant {self.id}: {self.name}, {self._phase}, {self._condition}>"
     
 #! Properties and Attributes
     @property
@@ -21,29 +26,40 @@ class Plant:
             raise ValueError('Name must be 2 or more characters')
         else:
             self._name = new_name
+
+#!Methods
+    # def condition(self, condition):
+    #     plant_condition = self._random_condition()
+    #     if condition is not plant_condition:
+    #         raise TypeError('Condition must be one of the following in the list')
+    #     else:
+    #         self._condition = condition
+
+    # def phase(self, phase): #updating seed phase
+    #     list_of_next_phase = ['Sapling', 'Bigger Sapling', 'Flower']
+    #     if phase not in list_of_next_phase:
+    #         raise TypeError('Phase must be one of the following in the list')
+    #     else:
+    #         self._phase = phase
     
-    @property
-    def phase(self):
-        return self._phase
-    
-    @phase.setter
-    def phase(self, phase):
-        list_of_phase = ['Seed', 'Sappling', 'Bigger Sappling', 'Flower']
-        if not isinstance(phase, list_of_phase):
-            raise TypeError('Phase must be one of the following in the list')
-        else:
-            self._phase = phase
-    
-    @property
-    def condition(self):
-        return self._condition
-    
-    @condition.setter
-    def condition(self, condition):
+#! Method to calculate random value
+    def _random_condition(self):
         list_of_condition = ['Need Water', 'Need Sunlight', 'Nothing']
-        if not isinstance(condition, list_of_condition):
-            raise TypeError('Condition must be one of the following in the list')
-        else:
-            self._condition = condition
+        return random.choice(list_of_condition)
+    
+    def change_phase(self): #updating seed phase based on conditional 
+        # if self is x:
+            # change phase to bud
+        # elif self is y:
+            # change phase to sapling
+        # elif self is z:
+            #change phase to flower
 
 #!Association Methods
+
+
+
+p = Plant('Bob')
+print(p)
+print(f'{p.name} is a {p._phase} and wants {p._random_condition()}')
+print(p.phase())
