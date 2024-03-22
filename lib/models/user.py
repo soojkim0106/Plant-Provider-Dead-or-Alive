@@ -1,6 +1,9 @@
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
 class User:
+
+#! User will require update if scoreboard is True
+
     all = {}
     def __init__(self, name, id=None):
         self.name = name
@@ -152,5 +155,3 @@ class User:
         except Exception as e:
             print("We could not delete this user:", e)
 
-# user3 = User.create("User 3")
-# print(user3)

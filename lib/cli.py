@@ -1,6 +1,6 @@
-
+##! Entry Point
 #! How our menu should look like
-from .cli_helpers import(
+from .cli_folder.cli_helpers import(
     #welcome text
     welcome,
     #Display all the menu below
