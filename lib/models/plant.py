@@ -192,6 +192,9 @@ class Plant:
         except Exception as e:
             print("We could not save this plant:", e)
 
+    # def update(self):
+    #     try:
+    #         with CONN:
     def delete(self):
         try:
             with CONN:

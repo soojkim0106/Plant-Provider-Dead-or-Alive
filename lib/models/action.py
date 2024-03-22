@@ -3,6 +3,9 @@ from sqlite3 import IntegrityError
 
 
 class Action:
+    
+    all = {}
+    
     phases = ["Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
@@ -204,7 +207,7 @@ class Action:
     @classmethod
     def instance_from_db(cls, row):
         try:
-            plant = cls(row[1], row[2], row[3], row[4], row[0])
+            plant = cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
             cls.all[plant.id] = plant
             return plant
         except Exception as e:
@@ -225,18 +228,18 @@ class Action:
             print("Error fetching all actions:", e)
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_user_action(cls, user_action):
         try:
             with CONN:
                 CURSOR.execute(
                     """
                         SELECT * FROM actions 
-                        WHERE name = ?;
+                        WHERE user_action = ?;
                     """,
-                    (name,),
+                    (user_action,),
                 )
-                plant = CURSOR.fetchone()
-                return cls.instance_from_db(plant) if plant else None
+                user_action = CURSOR.fetchone()
+                return cls.instance_from_db(user_action) if user_action else None
         except Exception as e:
             print("Error fetching plant by name:", e)
 
@@ -251,8 +254,8 @@ class Action:
                     """,
                     (id,),
                 )
-                plant = CURSOR.fetchone()
-                return cls.instance_from_db(plant) if plant else None
+                user_action = CURSOR.fetchone()
+                return cls.instance_from_db(user_action) if user_action else None
         except Exception as e:
             print("Error fetching plant by id:", e)
 
@@ -263,10 +266,10 @@ class Action:
             with CONN:
                 CURSOR.execute(
                     """
-                        INSERT INTO actions (name, condition, phase, is_alive)
+                        INSERT INTO actions (user_action, user_id, plant_id, day, phase_index)
                         VALUES (?,?,?,?);
                     """,
-                    (self.name, self.random_condition(), self.phase, self.is_alive),
+                    (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index),
                 )
                 self.id = CURSOR.lastrowid
                 type(self).all[self.id] = self
