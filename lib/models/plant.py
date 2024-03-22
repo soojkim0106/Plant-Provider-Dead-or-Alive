@@ -192,9 +192,20 @@ class Plant:
         except Exception as e:
             print("We could not save this plant:", e)
 
-    # def update(self):
-    #     try:
-    #         with CONN:
+    def update(self):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    """
+                    UPDATE actions SET name = ?, condition = ?, is_alive = ?, phase = ?
+                    WHERE id = ? 
+                    """, (self.name, self.condition, self.is_alive, self.phase),
+                )
+            type(self).all[self.id] = self
+            return self
+        except Exception as e:
+            print('Error updating plant:', e)
+            
     def delete(self):
         try:
             with CONN:
