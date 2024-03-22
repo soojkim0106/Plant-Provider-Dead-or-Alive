@@ -1,16 +1,28 @@
 from models.user import User
 from models.plant import Plant
-from models.action import Action
+# from models.action import Action
 # from helpers import console #! FROM RICH
 
 def drop_table():
-    pass
+    User.drop_table()
+    Plant.drop_table()
+    # Action.drop_table()
 
 def create_table():
-    pass
+    User.create_table()
+    Plant.create_table()
+    # Action.create_table()
 
 def seed_plantsy():
-    pass
+    
+    user1 = User.create("User 1")
+    user2 = User.create("User 2")
+
+    plant1 = Plant.create("Plant 1")
+    plant2 = Plant.create("Plant 2")
+
+    # action1 = Action.create("Action 1", plant1.id)
+    # action2 = Action.create("Action 2", plant2.id)
 
 def start_program():
     drop_table()

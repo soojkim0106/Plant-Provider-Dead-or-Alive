@@ -8,7 +8,7 @@ from .cli_helpers import(
     #Create or find user
     #If no user found, create user and generate another menu that creates plant
     find_or_create_user,
-    #Review the rules of the game 
+    #Review the rules of the game
     view_rules,
     #Review the score of current and other players
     view_scoreboard, #! (TBD)
