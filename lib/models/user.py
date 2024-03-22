@@ -92,7 +92,8 @@ class User:
             with CONN:
                 CURSOR.execute(
                     """
-                        SELECT * FROM users WHERE name =?;
+                        SELECT * FROM users 
+                        WHERE name =?;
                     """,
                     (name,),
                 )
@@ -125,7 +126,7 @@ class User:
                         INSERT INTO users (name)
                         VALUES (?);
                     """,
-                    (self.name),
+                    (self.name,),
                 )
                 CONN.commit()
                 self.id = CURSOR.lastrowid
@@ -150,3 +151,6 @@ class User:
                 self.id = None
         except Exception as e:
             print("We could not delete this user:", e)
+
+# user3 = User.create("User 3")
+# print(user3)
