@@ -3,6 +3,7 @@ from sqlite3 import IntegrityError
 import random
 import ipdb
 
+
 class Plant:
 
     all = {}
@@ -11,9 +12,9 @@ class Plant:
     def __init__(
         self,
         name,
-        condition= "Need Water",
-        is_alive=True,
+        condition="Need Water",
         phase="Seed",
+        is_alive=True,
         id=None,
     ):
         self.name = name
@@ -23,7 +24,7 @@ class Plant:
         self.id = id
 
     def __repr__(self):
-        return f"<Plant {self.id}: {self.name}, {self.phase}, {self.condition}, {self.is_alive}>"
+        return f"<Plant {self.id}: Name: {self.name}, Current Phase: {self.phase}, Condition: {self.condition}, Alive: {self.is_alive}>"
 
     #! Properties and Attributes
     @property
@@ -39,12 +40,6 @@ class Plant:
         else:
             self._name = new_name
 
-    #!Methods
-    def update_phase(self, new_phase):
-        if new_phase in self.phases:
-            self._phase = new_phase
-        else:
-            raise ValueError("Invalid phase")
     @property
     def condition(self):
         return self._condition
@@ -59,14 +54,16 @@ class Plant:
         return self._phase
 
     @phase.setter
-    def phase(self, phase): #updating seed phase 
+    def phase(self, phase):  # updating seed phase
         if phase not in type(self).phases:
-            raise TypeError('Phase must be one of the following in the list')
+            raise TypeError("Phase must be one of the following in the list")
         else:
             self._phase = phase
 
-    # def current_phase(self):
-    #     return self.phases[self._phase_index]
+    def update_phase(self, new_phase):
+        type(self).phase = new_phase
+        type(self).update(self)
+
     #! Method to calculate random value
     def random_condition(self):
         list_of_condition = ["Need Water", "Need Sunlight", "Nothing"]
@@ -100,13 +97,13 @@ class Plant:
                 """
                 )
         except Exception as e:
-            return e
+            print("Error dropping plants table:", e)
 
     @classmethod
     def create(cls, name):
         try:
             with CONN:
-                new_plant = cls(name, is_alive=True)
+                new_plant = cls(name)
                 new_plant.save()
                 return new_plant
         except Exception as e:
@@ -163,6 +160,7 @@ class Plant:
                     (id,),
                 )
                 plant = CURSOR.fetchone()
+                # ipdb.set_trace()
                 return cls.instance_from_db(plant) if plant else None
         except Exception as e:
             print("Error fetching plant by id:", e)
@@ -177,12 +175,7 @@ class Plant:
                         INSERT INTO plants (name, condition, phase, is_alive)
                         VALUES (?,?,?,?);
                     """,
-                    (
-                        self.name,
-                        self.random_condition(),
-                        self.phase,
-                        self.is_alive
-                    )
+                    (self.name, self.random_condition(), self.phase, self.is_alive),
                 )
                 self.id = CURSOR.lastrowid
                 type(self).all[self.id] = self
@@ -197,15 +190,16 @@ class Plant:
             with CONN:
                 CURSOR.execute(
                     """
-                    UPDATE actions SET name = ?, condition = ?, is_alive = ?, phase = ?
+                    UPDATE plants SET name = ?, condition = ?, is_alive = ?, phase = ?
                     WHERE id = ? 
-                    """, (self.name, self.condition, self.is_alive, self.phase),
+                    """,
+                    (self.name, self.condition, self.is_alive, self.phase, self.id),
                 )
             type(self).all[self.id] = self
             return self
         except Exception as e:
-            print('Error updating plant:', e)
-            
+            print("Error updating plant:", e)
+
     def delete(self):
         try:
             with CONN:
@@ -223,8 +217,3 @@ class Plant:
 
 
 #!Association Methods
-if __name__ == '__main__':
-    p = Plant("Bob")
-    print(p)
-    print(f"{p.name} is a {p.phase} and wants {p.random_condition()}")
-    print(p.phase)

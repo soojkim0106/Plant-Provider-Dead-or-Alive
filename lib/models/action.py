@@ -1,5 +1,8 @@
 from models.__init__ import CONN, CURSOR
+from models.plant import Plant
+from models.user import User
 from sqlite3 import IntegrityError
+import ipdb
 
 
 class Action:
@@ -9,7 +12,7 @@ class Action:
     phases = ["Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
-        self, user_action, user_id, plant_id, day=0, phase_index=0, plant_phase="Seed", id=None
+        self, user_action, user_id, plant_id, day=1, phase_index=0, plant_phase="Seed", id=None
     ):
         self.user_action = user_action
         self.user_id = user_id
@@ -21,10 +24,10 @@ class Action:
 
     def __repr__(self):
         return (
-            f"<Action {self.id}: {self.day} {self.user_action},"
+            f"<Action {self.id}: Day: {self.day} Action: {self.user_action},"
             + f"User ID: {self.user_id},"
-            + f"Plant ID: {self.plant_id}"
-            + f"Phase Index: {self.phase_index}"
+            + f"Plant ID: {self.plant_id},"
+            + f"Phase Index: {self.phase_index},"
             + f"Phase: {self.plant_phase}>"
         )
 
@@ -35,7 +38,7 @@ class Action:
 
     @day.setter
     def day(self, day):
-        if 0 < day >= 5:
+        if day < 6:
             self._day = day
         else:
             raise ValueError(
@@ -48,8 +51,6 @@ class Action:
 
     @user_id.setter
     def user_id(self, user_id):
-        from models.user import User
-
         if not isinstance(user_id, int):
             raise TypeError("user_id must be an integer")
         elif user_id < 1 or not User.find_by_id(user_id):  #! Build Find_By_Id in USER
@@ -65,8 +66,6 @@ class Action:
 
     @plant_id.setter
     def plant_id(self, plant_id):
-        from models.plant import Plant
-
         if not isinstance(plant_id, int):
             raise TypeError("plant_id must be an integer")
         elif plant_id < 1 or not Plant.find_by_id(
@@ -77,6 +76,7 @@ class Action:
             )
         else:
             self._plant_id = plant_id
+        
 
     @property
     def plant_phase(self):
@@ -95,18 +95,6 @@ class Action:
                 plant_phase
             )  #! can separate properties and attributes
 
-    # @property
-    # def phase_index(self):
-    #     return self._phase_index
-
-    # @phase_index.setter
-    # def phase_index(self, phase_index, plant_phase):
-    #     if not isinstance(phase_index, int):
-    #         raise TypeError("phase_index must be an integer")
-    #     elif phase_index < 0 or phase_index > len(self.phases) - 1:
-    #         raise ValueError("Phase index must be between 0 and the number of phases")
-    #     else:
-    #         self.phase_index = self.phases.index(plant_phase)
     @property
     def user_action(self):
         return self._user_action
@@ -122,43 +110,43 @@ class Action:
 
     #!Association
 
-    def check_condition(self, user_condition):
-        from models.plant import Plant
+    def compare_condition(self, user_action):
 
         plant = Plant.find_by_id(self.plant_id)
-        if self.is_dead():
-            return "The plant died!!!"
-        elif user_condition == plant._condition:
+        if user_action == plant._condition:
             return self.advance_phase()
         else:
             return self.incorrect_condition()
 
     def advance_phase(self):
-        from models.plant import Plant
 
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
-            self.phase_index += 1
-            self.plant_phase = self.phases[self.phase_index]
-            plant.update_phase(self.plant_phase)
+            phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
+            new_phase = type(self).phases[phase_index]
+            plant.update_phase(new_phase)
+            
+            self.phase_index = phase_index
+            self.plant_phase = new_phase
+            self.day = 1
+            type(self).update(self)
         else:
-            return "The plant is fully grown!!!."  #! ASCII ART?
-
+            return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
+        
     def incorrect_condition(self):
         self.day += 1  #! ASCII ART RETURNS?
-        if self.day > 4:
-            return self.is_dead()
+        if self.day > 5:
+            return self.make_dead()
 
-    def is_dead(self):
-        from models.plant import Plant
+    def make_dead(self):
+        try:
+            plant = Plant.find_by_id(self.plant_id)
+            plant.is_alive = False
+            plant.update()
+            return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
+        except Exception as e:
+            print('Your plant didn\'t die successfully', e)
 
-        plant = Plant.find_by_id(self.plant_id)
-        # if self.incorrect_condition():
-        plant.is_alive = False
-        print(f"Plant {plant.name} is no longer alive.")  #! this part in CLI helpers?
-        #     return True
-        # else:
-        #     return False
 
     @classmethod
     def create_table(cls):
@@ -169,8 +157,8 @@ class Action:
                         CREATE TABLE IF NOT EXISTS actions (
                             id INTEGER PRIMARY KEY,
                             user_action TEXT NOT NULL,
-                            user_id INTEGER CHECK(user_id > 0),
-                            plant_id INTEGER CHECK(plant_id > 0),
+                            user_id INTEGER,
+                            plant_id INTEGER,
                             day INTEGER,
                             phase_index INTEGER,
                             plant_phase TEXT,
@@ -198,7 +186,7 @@ class Action:
     def create(cls, user_action, user_id, plant_id):
         try:
             with CONN:
-                new_action = cls(user_action, user_id, plant_id, day=0, phase_index=0)
+                new_action = cls(user_action, user_id, plant_id)
                 new_action.save()
                 return new_action
         except Exception as e:
@@ -241,7 +229,7 @@ class Action:
                 user_action = CURSOR.fetchone()
                 return cls.instance_from_db(user_action) if user_action else None
         except Exception as e:
-            print("Error fetching plant by name:", e)
+            print("Error fetching plant by action:", e)
 
     @classmethod
     def find_by_id(cls, id):
@@ -266,19 +254,33 @@ class Action:
             with CONN:
                 CURSOR.execute(
                     """
-                        INSERT INTO actions (user_action, user_id, plant_id, day, phase_index)
-                        VALUES (?,?,?,?);
+                        INSERT INTO actions (user_action, user_id, plant_id, day, phase_index, plant_phase)
+                        VALUES (?,?,?,?,?,?);
                     """,
-                    (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index),
+                    (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index, self.plant_phase),
                 )
                 self.id = CURSOR.lastrowid
                 type(self).all[self.id] = self
                 return self
         except IntegrityError as e:
-            print("Name must be provided")
+            print("User_Action must be provided")
         except Exception as e:
             print("We could not save this plant:", e)
-
+            
+    def update(self):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    """
+                    UPDATE actions SET user_action = ?, user_id = ?, plant_id = ?, day = ?, phase_index = ?, plant_phase = ?
+                    WHERE id = ? 
+                    """, (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index, self.plant_phase, self.id,),
+                )
+            type(self).all[self.id] = self
+            return self
+        except Exception as e:
+            print('Error updating plant:', e)
+            
     def delete(self):
         try:
             with CONN:
