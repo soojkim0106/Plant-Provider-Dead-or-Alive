@@ -92,7 +92,8 @@ class User:
             with CONN:
                 CURSOR.execute(
                     """
-                        SELECT * FROM users WHERE name =?;
+                        SELECT * FROM users 
+                        WHERE name =?;
                     """,
                     (name,),
                 )

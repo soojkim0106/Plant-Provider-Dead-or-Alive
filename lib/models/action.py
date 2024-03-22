@@ -1,13 +1,14 @@
 class Action:
     phases = ["Seed", "Bud", "Sapling", "Flower"]
 
-    def __init__(self, user_id, plant_id, day, id=None):
+    def __init__(self, user_id, plant_id, day, plant_phase, id=None):
         self.user_id = user_id
         self.plant_id = plant_id
         self.day = day
-        self.id = id
+        self.plant_phase = plant_phase
         self.wrong_attempts = 0
-        self._phase_index = 0
+        self._phase_index = self.phases.index(plant_phase)
+        self.id = id
 
     def __repr__(self):
         return (
@@ -51,14 +52,14 @@ class Action:
         from models.plant import Plant
         if not isinstance(plant_id, int):
             raise TypeError('plant_id must be an integer')
-        elif plant_id < 1 or not Plant.find_by_id(plant_id): #! Build Find_By_Id in PLANT
+        elif plant_id < 1 or not Plant.find_by_id(plant_id): #! confirm find_by_id in PLANT works
             raise ValueError('Plant ID must be a positive integer and points to existing plant')
         else:
             self._plant_id = plant_id
 
-    # @property
-    # def plant_phase(self):
-    #     return self._plant_phase
+    @property
+    def plant_phase(self):
+        return self._plant_phase
 
     # @plant_phase.setter
     # def plant_phase(self, plant_phase):
@@ -70,16 +71,18 @@ class Action:
     #     else:
     #         self._plant_phase = plant_phase
 
-    #!Association
+    @plant_phase.setter
+    def plant_phase(self, plant_phase):
+        from models.plant import Plant
+        if not isinstance(plant_phase, str):
+            raise TypeError('plant_phase must be a string')
+        elif plant_phase not in self.phases:
+            raise ValueError('Plant phase must be a valid phase')
+        else:
+            self._plant_phase = plant_phase
+            self._phase_index = self.phases.index(plant_phase)
 
-    def change_phase(self):  # updating seed phase based on conditional
-        # if self is x:
-        # change phase to bud
-        # elif self is y:
-        # change phase to sapling
-        # elif self is z:
-        # change phase to flower
-        pass
+    #!Association
 
     def check_condition(self, user_condition):
         from models.plant import Plant
@@ -91,11 +94,27 @@ class Action:
         else:
             return self.incorrect_condition()
 
-    def is_dead(self):
-        return self.wrong
-
     def advance_phase(self):
-        pass
+        from models.plant import Plant
+        plant = Plant.find_by_id(self.plant_id)
+        if self._phase_index < len(self.phases) - 1:
+            self._phase_index += 1
+            self.plant_phase = self.phases[self._phase_index]
+            plant.update_phase(self.plant_phase)
+        else:
+            return "The plant is fully grown!!!." #! ASCII ART? 
 
     def incorrect_condition(self):
-        pass
+        self.wrong_attempts += 1  #! ASCII ART RETURNS?
+        if self.wrong_attempts >= 5:
+            return self.is_dead()
+
+    def is_dead(self):
+        from models.plant import Plant
+        plant = Plant.find_by_id(self.plant_id)
+        if self.wrong_attempts >= 5:
+            plant.is_alive = False
+            print(f"Plant {plant.name} is no longer alive.") #! this part in CLI helpers?
+            return True
+        else:
+            return False
