@@ -19,12 +19,12 @@ def create_table():
 
 def seed_plantsy():
 
-    user1 = User.create("User 1")
-    user2 = User.create("User 2")
+    user1 = User.create("Bob")
+    user2 = User.create("Jane")
 
-    plant1 = Plant.create("Plant 1")
-    plant2 = Plant.create("Plant 2")
-    plant3 = Plant.create("Plant 3")
+    plant1 = Plant.create("Bob's plant")
+    plant2 = Plant.create("Bob's plant1")
+    plant3 = Plant.create("Jane's plant")
 
     action1 = Action.create("Action 1", user1.id, plant1.id)
     action2 = Action.create("Action 2", user1.id, plant2.id)
@@ -35,7 +35,6 @@ def start_program():
     drop_table()
     create_table()
     seed_plantsy()
-    # console.print('Back to home page!')
 
 
 if __name__ == "__main__":
