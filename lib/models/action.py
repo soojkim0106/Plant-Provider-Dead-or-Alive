@@ -116,6 +116,12 @@ class Action:
         return Plant.find_by_id(self.plant_id) if self.plant_id else None
     
     #! Helper Methods
+    
+    def start_phase(self, user_action):
+        if user_action == "Purchased":
+            self.advance_phase()
+            
+
     def compare_condition(self, user_action):
 
         plant = Plant.find_by_id(self.plant_id)

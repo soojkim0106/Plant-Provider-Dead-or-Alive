@@ -7,13 +7,13 @@ import ipdb
 class Plant:
 
     all = {}
-    phases = ["Seed", "Bud", "Sapling", "Flower"]
+    phases = ["Purchased","Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
         self,
         name,
-        condition="Need Water",
-        phase="Seed",
+        condition="Planted",
+        phase="Purchased",
         is_alive=True,
         id=None,
     ):
@@ -39,16 +39,7 @@ class Plant:
             raise ValueError("Name must be 2 or more characters")
         else:
             self._name = new_name
-
-    @property
-    def condition(self):
-        return self._condition
-
-    @condition.setter
-    def condition(self, _):
-        plant_condition = self.random_condition()
-        self._condition = plant_condition
-
+            
     @property
     def phase(self):
         return self._phase
@@ -59,6 +50,14 @@ class Plant:
             raise TypeError("Phase must be one of the following in the list")
         else:
             self._phase = phase
+    @property
+    def condition(self):
+        return self._condition
+
+    @condition.setter
+    def condition(self, _):
+            plant_condition = self.random_condition()
+            self._condition = plant_condition
 
     def update_phase(self, new_phase):
         type(self).phase = new_phase
