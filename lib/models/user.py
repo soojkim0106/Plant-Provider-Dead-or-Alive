@@ -54,7 +54,7 @@ class User:
                 """
                 )
         except Exception as e:
-            return e
+            print("Error dropping users table:", e)
 
     @classmethod
     def create(cls, name):

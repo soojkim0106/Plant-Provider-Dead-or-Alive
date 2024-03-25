@@ -1,19 +1,39 @@
 ##! Entry Point
 #! How our menu should look like
-from .cli_folder.cli_helpers import(
-    #welcome text
+from helpers import(
     welcome,
-    #Display all the menu below
     menu,
-    #Create or find user
-    #If no user found, create user and generate another menu that creates plant
     find_or_create_user,
-    #Review the rules of the game
     view_rules,
-    #Review the score of current and other players
-    view_scoreboard, #! (TBD)
-    #Be able to delete user information
+    view_scoreboard,
+    find_user,
+    find_users,
     delete_user,
-    #Need exit keyword to exit our of the program at any point
-    exit_program,
+    exit_program
 )
+
+
+def main():
+    welcome()
+    while True:
+        menu()
+        choice = input('> ')
+        if choice == '1':
+            find_or_create_user()
+        elif choice == '2':
+            view_rules()
+        elif choice == '3':
+            view_scoreboard()
+        elif choice == '4':
+            find_user()
+        elif choice =='5':
+            find_users()
+        elif choice == '6':
+            delete_user()
+        elif choice == '7':
+            exit_program()
+        else:
+            print("Invalid input")
+
+if __name__ == "__main__":
+    main()

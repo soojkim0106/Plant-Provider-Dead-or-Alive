@@ -9,10 +9,11 @@ class Action:
     
     all = {}
     
-    phases = ["Seed", "Bud", "Sapling", "Flower"]
+    phases = ["Purchased", "Seed", "Bud", "Sapling", "Flower"]
+
 
     def __init__(
-        self, user_action, user_id, plant_id, day=1, phase_index=0, plant_phase="Seed", id=None
+        self, user_action, user_id, plant_id, day=1, phase_index=0, plant_phase="Purchased", id=None
     ):
         self.user_action = user_action
         self.user_id = user_id
@@ -77,7 +78,6 @@ class Action:
         else:
             self._plant_id = plant_id
         
-
     @property
     def plant_phase(self):
         return self._plant_phase
@@ -108,8 +108,14 @@ class Action:
         else:
             self._user_action = user_action
 
-    #!Association
-
+    #! Association Methods
+    def user(self):
+        return User.find_by_id(self.user_id) if self.user_id else None
+    
+    def plant(self):
+        return Plant.find_by_id(self.plant_id) if self.plant_id else None
+    
+    #! Helper Methods
     def compare_condition(self, user_action):
 
         plant = Plant.find_by_id(self.plant_id)
@@ -147,7 +153,7 @@ class Action:
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
 
-
+    #! Utility ORM Class Methods
     @classmethod
     def create_table(cls):
         try:
@@ -248,7 +254,6 @@ class Action:
             print("Error fetching plant by id:", e)
 
     #! ORM instance method
-
     def save(self):
         try:
             with CONN:
