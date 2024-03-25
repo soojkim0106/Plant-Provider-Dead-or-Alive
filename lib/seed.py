@@ -2,16 +2,17 @@ from models.user import User
 from models.plant import Plant
 from models.action import Action
 
+
 # from helpers import console #! FROM RICH
 
 
-def drop_table():
-    User.drop_table()
-    Plant.drop_table()
+def drop_tables():
     Action.drop_table()
+    Plant.drop_table()
+    User.drop_table()
 
 
-def create_table():
+def create_tables():
     User.create_table()
     Plant.create_table()
     Action.create_table()
@@ -32,8 +33,8 @@ def seed_plantsy():
 
 
 def start_program():
-    drop_table()
-    create_table()
+    drop_tables()
+    create_tables()
     seed_plantsy()
 
 
