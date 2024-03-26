@@ -7,7 +7,7 @@ import ipdb
 class Plant:
 
     all = {}
-    phases = ["Purchased","Seed", "Bud", "Sapling", "Flower"]
+    phases = ["Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
         self,
@@ -39,7 +39,7 @@ class Plant:
             raise ValueError("Name must be 2 or more characters")
         else:
             self._name = new_name
-            
+
     @property
     def phase(self):
         return self._phase
@@ -50,14 +50,18 @@ class Plant:
             raise TypeError("Phase must be one of the following in the list")
         else:
             self._phase = phase
+
     @property
     def condition(self):
         return self._condition
 
     @condition.setter
     def condition(self, _):
+        if self.phase != "Purchased":
             plant_condition = self.random_condition()
             self._condition = plant_condition
+        else:
+            self._condition = "Planted"
 
     def update_phase(self, new_phase):
         type(self).phase = new_phase

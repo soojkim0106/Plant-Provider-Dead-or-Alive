@@ -39,7 +39,7 @@ class Action:
 
     @day.setter
     def day(self, day):
-        if day < 6:
+        if day <= 6:
             self._day = day
         else:
             raise ValueError(
@@ -122,10 +122,17 @@ class Action:
             self.advance_phase()
             
 
-    def compare_condition(self, user_action):
+    # def compare_condition(self, user_action):
 
+    #     plant = Plant.find_by_id(self.plant_id)
+    #     if user_action == plant._condition:
+    #         return self.advance_phase()
+    #     else:
+    #         return self.incorrect_condition()
+        
+    def compare_condition(self, user_action):
         plant = Plant.find_by_id(self.plant_id)
-        if user_action == plant._condition:
+        if plant._condition == "Planted" or user_action == plant._condition:
             return self.advance_phase()
         else:
             return self.incorrect_condition()
