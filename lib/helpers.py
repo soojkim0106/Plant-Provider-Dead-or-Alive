@@ -62,10 +62,10 @@ def start_game(user):
 
 def check_condition(user):
     console.print("Your plant is in need of something! What does it need?")
-    console.print("1. Is it thirsty? Type: Water")
-    console.print("2. Does it need sun? Type: Sunlight")
-    console.print("3. Is your plant satisfied as it is? Type: Nothing!")
-    # console.print("4. Want to know more about your plant? Type: Plant Status")
+    console.print("1. Does it need moisture? Type: [underline]Water[/]")
+    console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
+    console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
+    console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
     selected_condition = input("What does your plant need?: ").strip().lower()
 
     if selected_condition == EXIT_WORDS:
