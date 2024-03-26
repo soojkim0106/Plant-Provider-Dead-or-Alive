@@ -11,13 +11,16 @@ from helpers import(
     exit_program
 )
 
+EXIT_WORDS = ["6", "exit", "quit"]
 
 def main():
     welcome()
     while True:
         menu()
         choice = input('> ')
-        if choice == '1':
+        if choice in EXIT_WORDS:
+            exit_program()
+        elif choice == '1':
             find_or_create_user()
         elif choice == '2':
             view_rules()

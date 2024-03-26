@@ -107,6 +107,7 @@ class Plant:
         except Exception as e:
             print("Error fetching user's action:", e)
 
+    #! Utility ORM Class Methods
     @classmethod
     def create_table(cls):
         try:
@@ -269,4 +270,4 @@ class Plant:
             print("We could not delete this plant:", e)
 
 
-#!Association Methods
+
