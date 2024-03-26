@@ -5,7 +5,7 @@ from seed import start_program
 from rich.console import Console
 
 console = Console()
-EXIT_WORDS = ["6", "exit", "quit"]
+EXIT_WORDS = ["7", "exit", "quit"]
 
 
 def welcome():
@@ -20,7 +20,8 @@ def menu():
     console.print("3. View scoreboard")
     console.print("4. Find User")
     console.print("5. Find Users")
-    console.print("6. Exit the program")
+    console.print("6. Delete User")
+    console.print("7. Exit the program")
 
 
 def exit_program():
@@ -46,68 +47,46 @@ def find_or_create_user():  # sourcery skip: extract-method
             exit_program()
 
         new_plant = Plant.create(plant_name)
-        new_association = Action.create("Water", new_user.id, new_plant.id)
+        Action.create("Purchased", new_user.id, new_plant.id)
         console.print(f"Thank you for purchasing your new plant {new_plant.name}!")
-
+        start_game(new_user)
     else:
-        console.print(f"Welcome back {user.name}! Your plant is waiting for you!", style="bold")
-        #retrieve plants information
+        console.print(f"Welcome back {user.name}! Your plant is waiting for you!")
         start_game(user)
 
 
 def start_game(user):
-    # console.print("Welcome to Plant Provider: Dead or Alive!")
-    console.print("Please select one of the options below: ")
-    console.print("1. Take care of your plant")
-    console.print("2. View your plants")
-    console.print("3. Delete User")
-    console.print("4. Exit out of program")
-
-    user_input = input("> ").strip().lower()
-    
-    if user_input in EXIT_WORDS:
-        exit_program()
-
-    if user_input == "1":
-        check_condition(user)
-    elif user_input == "2":
-        view_inventory()
-    elif user_input == "3":
-        delete_user()
-    elif user_input == "4":
-        exit_program()
+    check_condition(user)
 
 
 def check_condition(user):
-    console.print("Your plant is in need of something! What does it need?")
-    console.print("1. Does it need moisture? Type: [underline]Water[/]")
-    console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
-    console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
-    console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
-    selected_condition = input("What does your plant need?: ").strip().lower()
+    console.print("Your plant is in need of something! Here are your options: ")
+    console.print("1. Give water")
+    console.print("2. Give sunlight")
+    console.print("3. Do nothing!")
+    console.print("4. Check plant's status")
 
-    if selected_condition in EXIT_WORDS:
+    selected_condition = input("What would you like to do?: ").strip().lower()
+
+    if selected_condition == EXIT_WORDS:
         exit_program()
 
     if selected_condition not in [
-        "water",
-        "sunlight",
-        "nothing",
-        "check status"
+        "give water",
+        "give sunlight",
+        "do nothing",
+        "check plant's status"
     ]:
         console.print("Please pick one of the provided options!")
         return check_condition(user)
 
-    if selected_condition is "check status":
-        return user.plant()
     if selected_condition in [
-        "water",
-        "sunlight",
-        "nothing",
-        # "plant status"
+        "give water",
+        "give sunlight",
+        "do nothing",
+        "check plant's status"
     ]:
-        user.update_user_action() #invoke correctly
-        user.compare_condition()
+        Action.compare_condition(user, selected_condition)
         console.print("You selected one of the options")
 
 
@@ -130,7 +109,7 @@ def view_scoreboard():
 
 
 def delete_user():
-    username = input("Confirm your username: ").strip()
+    username = input("Enter your username: ").strip()
 
     if username.lower() in EXIT_WORDS:
         exit_program()
@@ -138,6 +117,8 @@ def delete_user():
     if user := User.find_by_name(username):
         user.delete()
         console.print(f"Successfully deleted {username}")
+    else:
+        console.print(f"We could not locate {username}. Failed to delete.")
 
 
 def find_user():
@@ -165,4 +146,11 @@ def find_users():
         console.print("There are no users playing this game :(")
 
 def view_inventory():
-    pass
+
+     if Plant.get_all():
+        name = input("Enter username to display inventory: ").strip()
+        print(f"User's plants (user_id: {name}):")
+        for plant in plant:
+            print(plant)
+        else:
+            print(f"No plants found for user with the name {name}")

@@ -2,7 +2,7 @@ from models.__init__ import CONN, CURSOR
 from models.plant import Plant
 from models.user import User
 from sqlite3 import IntegrityError
-# import ipdb
+import ipdb
 
 
 class Action:
@@ -344,3 +344,20 @@ class Action:
                 self.id = None
         except Exception as e:
             print("We could not delete this action:", e)
+
+@classmethod
+def view_inventory(cls):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    """
+                        SELECT * FROM actions
+                        WHERE user_id =?;
+                    """,
+                    (user_id,),
+                )
+                CONN.commit()
+                user_id = CURSOR.fetchall()
+                return [cls.instance_from_db(user_id) for user_id in Action]
+        except Exception as e:
+            print("Error fetching user's plants:", e)

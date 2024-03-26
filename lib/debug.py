@@ -2,7 +2,7 @@ from models.__init__ import CONN, CURSOR
 from models.action import Action
 from models.plant import Plant
 from models.user import User
-# import ipdb;
+import ipdb;
 
 Action.drop_table()
 User.drop_table()
@@ -21,4 +21,4 @@ action1 = Action("Water", user1.id, plant1.id)
 action1.save()
 action1.compare_condition("Water")
 
-# ipdb.set_trace()
+ipdb.set_trace()
