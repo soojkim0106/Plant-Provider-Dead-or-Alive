@@ -230,7 +230,7 @@ class Action:
         """
                 )
                 actions = CURSOR.fetchall()
-                return [cls.instance_from_db(plant) for plant in actions]
+                return [cls.instance_from_db(plant) for plant in actions] #! Should be user_action arg?
         except Exception as e:
             print("Error fetching all actions:", e)
 
@@ -264,7 +264,7 @@ class Action:
                 user_action = CURSOR.fetchone()
                 return cls.instance_from_db(user_action) if user_action else None
         except Exception as e:
-            print("Error fetching plant by id:", e)
+            print("Error fetching action by id:", e)
 
     #! ORM instance method
     def save(self):
@@ -283,7 +283,7 @@ class Action:
         except IntegrityError as e:
             print("User_Action must be provided")
         except Exception as e:
-            print("We could not save this plant:", e)
+            print("We could not save this action:", e)
             
     def update(self):
         try:
@@ -297,7 +297,7 @@ class Action:
             type(self).all[self.id] = self
             return self
         except Exception as e:
-            print('Error updating plant:', e)
+            print('Error updating action:', e)
             
     def delete(self):
         try:
@@ -312,4 +312,4 @@ class Action:
                 del type(self).all[self.id]
                 self.id = None
         except Exception as e:
-            print("We could not delete this plant:", e)
+            print("We could not delete this action:", e)
