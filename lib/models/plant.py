@@ -13,13 +13,13 @@ class Plant:
         self,
         name,
         condition="Planted",
-        phase="Purchased",
+        phase=None,
         is_alive=True,
         id=None,
     ):
         self.name = name
-        self.condition = condition
-        self.phase = phase
+        self._condition = condition
+        self._phase = phase if phase else "Purchased"
         self.is_alive = is_alive
         self.id = id
 
