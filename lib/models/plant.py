@@ -1,25 +1,27 @@
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
+from models.user import User
+from models.action import Action
 import random
-import ipdb
+# import ipdb
 
 
 class Plant:
 
     all = {}
-    phases = ["Purchased","Seed", "Bud", "Sapling", "Flower"]
+    phases = ["Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
         self,
         name,
         condition="Planted",
-        phase="Purchased",
+        phase=None,
         is_alive=True,
         id=None,
     ):
         self.name = name
-        self.condition = condition
-        self.phase = phase
+        self._condition = self.random_condition()
+        self._phase = phase if phase else "Purchased"
         self.is_alive = is_alive
         self.id = id
 
@@ -39,7 +41,7 @@ class Plant:
             raise ValueError("Name must be 2 or more characters")
         else:
             self._name = new_name
-            
+
     @property
     def phase(self):
         return self._phase
@@ -50,14 +52,19 @@ class Plant:
             raise TypeError("Phase must be one of the following in the list")
         else:
             self._phase = phase
+
     @property
     def condition(self):
         return self._condition
 
     @condition.setter
     def condition(self, _):
+        if self.phase != "Purchased":
             plant_condition = self.random_condition()
             self._condition = plant_condition
+            self._phase = self.phase
+        else:
+            self._condition = "Purchased"
 
     def update_phase(self, new_phase):
         type(self).phase = new_phase
@@ -65,8 +72,41 @@ class Plant:
 
     #! Method to calculate random value
     def random_condition(self):
-        list_of_condition = ["Need Water", "Need Sunlight", "Nothing"]
+        list_of_condition = ["Water", "Sunlight", "Nothing"]
         return random.choice(list_of_condition)
+
+        #!Association Methods
+
+    def user(self):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    """
+                        SELECT user_id FROM actions WHERE plant_id =?
+                    """,
+                    (self.id,),
+                )
+                rows = CURSOR.fetchall()
+                return [User.find_by("id", row[0]) for row in rows]
+        except Exception as e:
+            print("Error fetching user's plants:", e)
+
+    def action(self):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    """
+                        SELECT * FROM actions WHERE user_id =?
+                    """,
+                    (self.id,),
+                )
+                rows = CURSOR.fetchall()
+                return [
+                    Action(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+                    for row in rows
+                ]
+        except Exception as e:
+            print("Error fetching user's action:", e)
 
     @classmethod
     def create_table(cls):
@@ -159,10 +199,25 @@ class Plant:
                     (id,),
                 )
                 plant = CURSOR.fetchone()
-                # ipdb.set_trace()
                 return cls.instance_from_db(plant) if plant else None
         except Exception as e:
             print("Error fetching plant by id:", e)
+
+    @classmethod
+    def find_by(cls, attr, val):
+        try:
+            with CONN:
+                CURSOR.execute(
+                    f"""
+                    SELECT * FROM plants
+                    WHERE {attr} IS ?;
+                    """,
+                    (val,),
+                )
+                row = CURSOR.fetchone()
+                return cls(row[1], row[2], row[3], row[4], row[0]) if row else None
+        except Exception as e:
+            print("Error finding plants by attribute:", e)
 
     #! ORM instance method
 

@@ -1,7 +1,6 @@
 from models.user import User
 from models.plant import Plant
 from models.action import Action
-import ipdb
 
 
 # from helpers import console #! FROM RICH
@@ -32,7 +31,7 @@ def seed_plantsy():
     # action2 = Action.create("Action 2", user1.id, plant2.id)
     # action3 = Action.create("Action 2", user2.id, plant3.id)
     
-    ipdb.set_trace()
+    # ipdb.set_trace()
 
 def start_program():
     drop_tables()
