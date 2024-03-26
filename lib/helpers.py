@@ -47,9 +47,9 @@ def find_or_create_user():  # sourcery skip: extract-method
             exit_program()
 
         new_plant = Plant.create(plant_name)
-        new_action = Action.create("Water", new_user.id, new_plant.id)
+        new_association = Action.create("Water", new_user.id, new_plant.id)
         console.print(f"Thank you for purchasing your new plant {new_plant.name}!")
-        start_game(new_action)
+        start_game(new_association)
     else:
         console.print(f"Welcome back {user.name}! Your plant is waiting for you!")
         #retrieve plants information
@@ -86,8 +86,8 @@ def check_condition(user):
         "nothing",
         # "plant status"
     ]:
-        Action.update_user_action(user, selected_condition) #invoke correctly
-        Action.compare_condition(user)
+        user.update_user_action() #invoke correctly
+        user.compare_condition()
         console.print("You selected one of the options")
 
 

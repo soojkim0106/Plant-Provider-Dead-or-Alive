@@ -1,7 +1,5 @@
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
-from models.plant import Plant
-from models.action import Action
 class User:
 
     #! User will require update if scoreboard is True
@@ -29,8 +27,8 @@ class User:
             self._name = new_name
 
     #!Association Methods
-
     def plant(self):
+        from models.plant import Plant
         try:
             with CONN:
                 CURSOR.execute(
@@ -45,6 +43,7 @@ class User:
             print("Error fetching user's plants:", e)
 
     def action(self):
+        from models.action import Action
         try:
             with CONN:
                 CURSOR.execute(
