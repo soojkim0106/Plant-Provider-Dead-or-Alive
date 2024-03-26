@@ -2,15 +2,14 @@ from models.__init__ import CONN, CURSOR
 from models.plant import Plant
 from models.user import User
 from sqlite3 import IntegrityError
-import ipdb
+# import ipdb
 
 
 class Action:
-    
-    all = {}
-    
-    phases = ["Purchased", "Seed", "Bud", "Sapling", "Flower"]
 
+    all = {}
+
+    phases = ["Purchased", "Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
         self, user_action, user_id, plant_id, day=1, phase_index=0, plant_phase="Purchased", id=None
@@ -77,7 +76,7 @@ class Action:
             )
         else:
             self._plant_id = plant_id
-        
+
     @property
     def plant_phase(self):
         return self._plant_phase
@@ -104,38 +103,30 @@ class Action:
         if not isinstance(user_action, str):
             raise TypeError(
                 "user_action must be a string"
-            )  #! We need to validate this somewhere ["Need Water", "Need Sunlight", "Nothing"]
+            )  #! We have to validate this somewhere ["Water", "Sunlight", "Nothing"]
         else:
             self._user_action = user_action
 
     #! Association Methods
     def user(self):
         return User.find_by_id(self.user_id) if self.user_id else None
-    
+
     def plant(self):
         return Plant.find_by_id(self.plant_id) if self.plant_id else None
-    
+
     #! Helper Methods
-    
-    def start_phase(self, user_action):
-        if user_action == "Purchased":
-            self.advance_phase()
-            
 
-    # def compare_condition(self, user_action):
+    def start_phase(self):
+        if type(self).user_action == "Purchased":
+            self.compare_condition()
 
-    #     plant = Plant.find_by_id(self.plant_id)
-    #     if user_action == plant._condition:
-    #         return self.advance_phase()
-    #     else:
-    #         return self.incorrect_condition()
-        
-    def compare_condition(self, user_action):
+    def compare_condition(self):
         plant = Plant.find_by_id(self.plant_id)
-        if plant._condition == "Planted" or user_action == plant._condition:
-            return self.advance_phase()
+        # if plant._condition == "Planted" or user_action == plant._condition:
+        if type(self).user_action == plant._condition:
+            return type(self).advance_phase()
         else:
-            return self.incorrect_condition()
+            return type(self).incorrect_condition()
 
     def advance_phase(self):
 
@@ -144,14 +135,14 @@ class Action:
             phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
             new_phase = type(self).phases[phase_index]
             plant.update_phase(new_phase)
-            
+
             self.phase_index = phase_index
             self.plant_phase = new_phase
             self.day = 1
             type(self).update(self)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
-        
+
     def incorrect_condition(self):
         self.day += 1  #! ASCII ART RETURNS?
         if self.day > 5:
@@ -165,6 +156,10 @@ class Action:
             return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
+
+    def update_user_action(self, new_action):
+        type(self).user_action = new_action
+        # type(self).update(self)
 
     #! Utility ORM Class Methods
     @classmethod
@@ -284,7 +279,7 @@ class Action:
             print("User_Action must be provided")
         except Exception as e:
             print("We could not save this action:", e)
-            
+
     def update(self):
         try:
             with CONN:
@@ -298,7 +293,7 @@ class Action:
             return self
         except Exception as e:
             print('Error updating action:', e)
-            
+
     def delete(self):
         try:
             with CONN:

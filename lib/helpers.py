@@ -47,11 +47,12 @@ def find_or_create_user():  # sourcery skip: extract-method
             exit_program()
 
         new_plant = Plant.create(plant_name)
-        Action.create("Purchased", new_user.id, new_plant.id)
+        new_action = Action.create("Water", new_user.id, new_plant.id)
         console.print(f"Thank you for purchasing your new plant {new_plant.name}!")
-        start_game(new_user)
+        start_game(new_action)
     else:
         console.print(f"Welcome back {user.name}! Your plant is waiting for you!")
+        #retrieve plants information
         start_game(user)
 
 
@@ -60,33 +61,33 @@ def start_game(user):
 
 
 def check_condition(user):
-    console.print("Your plant is in need of something! Here are your options: ")
-    console.print("1. Give water")
-    console.print("2. Give sunlight")
-    console.print("3. Do nothing!")
-    console.print("4. Check plant's status")
-
-    selected_condition = input("What would you like to do?: ").strip().lower()
+    console.print("Your plant is in need of something! What does it need?")
+    console.print("1. Is it thirsty? Type: Water")
+    console.print("2. Does it need sun? Type: Sunlight")
+    console.print("3. Is your plant satisfied as it is? Type: Nothing!")
+    # console.print("4. Want to know more about your plant? Type: Plant Status")
+    selected_condition = input("What does your plant need?: ").strip().lower()
 
     if selected_condition == EXIT_WORDS:
         exit_program()
 
     if selected_condition not in [
-        "give water",
-        "give sunlight",
-        "do nothing",
-        "check plant's status"
+        "water",
+        "sunlight",
+        "nothing",
+        # "plant status"
     ]:
         console.print("Please pick one of the provided options!")
         return check_condition(user)
 
     if selected_condition in [
-        "give water",
-        "give sunlight",
-        "do nothing",
-        "check plant's status"
+        "water",
+        "sunlight",
+        "nothing",
+        # "plant status"
     ]:
-        Action.compare_condition(user, selected_condition)
+        Action.update_user_action(user, selected_condition) #invoke correctly
+        Action.compare_condition(user)
         console.print("You selected one of the options")
 
 
