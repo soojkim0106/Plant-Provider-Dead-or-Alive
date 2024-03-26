@@ -38,7 +38,7 @@ class Action:
 
     @day.setter
     def day(self, day):
-        if day <= 6:
+        if day <= 4:
             self._day = day
         else:
             raise ValueError(
@@ -145,7 +145,7 @@ class Action:
     def incorrect_condition(self):
         self.day += 1 
         self.update()
-        if self.day > 5:
+        if self.day > 3:
             return self.make_dead()
     def make_dead(self):
         try:

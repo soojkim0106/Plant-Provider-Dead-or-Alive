@@ -8,7 +8,6 @@ from helpers import(
     view_scoreboard,
     find_user,
     find_users,
-    delete_user,
     exit_program
 )
 
@@ -29,8 +28,6 @@ def main():
         elif choice =='5':
             find_users()
         elif choice == '6':
-            delete_user()
-        elif choice == '7':
             exit_program()
         else:
             print("Invalid input")
