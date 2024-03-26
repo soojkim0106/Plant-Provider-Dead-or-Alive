@@ -119,11 +119,14 @@ class Action:
     def start_phase(self):
         if type(self).user_action == "Purchased":
             self.compare_condition()
+    
+    def update_user_action(self, new_action):
+        self.user_action = new_action
 
-    def compare_condition(self, user_action):
+    def compare_condition(self, user_action, plant):
 
-        plant = Plant.find_by_id(self.plant_id)
-        if user_action == plant._condition:
+        # plant = Plant.find_by_id(self.plant_id)
+        if user_action == plant.condition:
             return self.advance_phase()
         else:
             return self.incorrect_condition()
