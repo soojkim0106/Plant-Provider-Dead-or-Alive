@@ -28,11 +28,11 @@ def seed_plantsy():
     # plant2 = Plant.create("Bob's plant1")
     # plant3 = Plant.create("Jane's plant")
 
-    # action1 = Action.create("Water", user1.id, plant1.id)
+    action1 = Action.create("Water", user1.id, plant1.id)
     # action2 = Action.create("Action 2", user1.id, plant2.id)
     # action3 = Action.create("Action 2", user2.id, plant3.id)
     
-    ipdb.set_trace()
+    # ipdb.set_trace()
 
 def start_program():
     drop_tables()

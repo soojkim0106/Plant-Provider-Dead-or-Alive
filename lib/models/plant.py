@@ -65,7 +65,7 @@ class Plant:
             self._condition = "Purchased"
 
     def update_phase(self, new_phase):
-        type(self).phase = new_phase
+        self.phase = new_phase
         self.update()
 
     #! Method to calculate random value
