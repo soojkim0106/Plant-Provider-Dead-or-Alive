@@ -230,7 +230,7 @@ class Action:
         """
                 )
                 actions = CURSOR.fetchall()
-                return [cls.instance_from_db(plant) for plant in actions] #! Should be user_action arg?
+                return [cls.instance_from_db(user_action) for user_action in actions] #! Should be user_action arg?
         except Exception as e:
             print("Error fetching all actions:", e)
 
