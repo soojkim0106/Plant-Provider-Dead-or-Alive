@@ -61,7 +61,8 @@ def start_game(user):
     console.print("1. Take care of your plant")
     console.print("2. View your plants")
     console.print("3. Delete User")
-    console.print("4. Exit out of program")
+    console.print("4. Back to main menu")
+    console.print("5. Exit out of program")
 
     user_input = input("> ").strip().lower()
     
@@ -75,6 +76,8 @@ def start_game(user):
     elif user_input == "3":
         delete_user()
     elif user_input == "4":
+        pass
+    elif user_input == "5":
         exit_program()
 
 
@@ -98,7 +101,7 @@ def check_condition(user):
         console.print("Please pick one of the provided options!")
         return check_condition(user)
 
-    if selected_condition is "check status":
+    if selected_condition == "check status":
         return user.plant()
     if selected_condition in [
         "water",
@@ -117,7 +120,7 @@ def view_rules():
     console.print("Here are the basic instructions:")
     console.print("1. Your plant will decide on what it is required to grow.")
     console.print(
-        "2. You must guess the correct demand that the plant wants in 5 days."
+        "2. You must guess the correct demand that the plant wants in 3 days."
     )
     console.print("3. If you do not guess within the given days, your plant will die.")
     console.print(
