@@ -3,12 +3,15 @@ from models.plant import Plant
 from models.action import Action
 from seed import start_program
 from rich.console import Console
+import click
+import ipdb
 
 console = Console()
-EXIT_WORDS = ["6", "exit", "quit"]
+EXIT_WORDS = ["5", "exit", "quit", "c"]
 
 
 def welcome():
+    click.clear()
     console.rule("[bold green]Plant Provider: Dead or Alive :seedling:")
     start_program()
 
@@ -17,10 +20,9 @@ def menu():
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
-    console.print("3. View scoreboard")
-    console.print("4. Find User")
-    console.print("5. Find Users")
-    console.print("6. Exit the program")
+    console.print("3. Find User")
+    console.print("4. Find Users")
+    console.print("5. Exit the program")
 
 
 def exit_program():
@@ -46,13 +48,13 @@ def find_or_create_user():  # sourcery skip: extract-method
             exit_program()
 
         new_plant = Plant.create(plant_name)
-        new_association = Action.create("Water", new_user.id, new_plant.id)
+        new_association = Action.create("Purchase", new_user.id, new_plant.id)
         console.print(f"Thank you for purchasing your new plant {new_plant.name}!")
-
     else:
         console.print(f"Welcome back {user.name}! Your plant is waiting for you!", style="bold")
         #retrieve plants information
-        start_game(user)
+
+    start_game(user)
 
 
 def start_game(user):
@@ -70,9 +72,12 @@ def start_game(user):
         exit_program()
 
     if user_input == "1":
-        check_condition(user)
+        picked_plant = pick_plant()
+        #! Find the action given to the given the id of picked_plant and given id of user
+        #! Find the action that connects plant and user
+        check_condition(user, picked_plant)#! third argument
     elif user_input == "2":
-        view_inventory()
+        view_inventory(user)
     elif user_input == "3":
         delete_user()
     elif user_input == "4":
@@ -80,8 +85,14 @@ def start_game(user):
     elif user_input == "5":
         exit_program()
 
+def pick_plant():
+     #! Find by name of plant that you want to take care of
+     #! check conditional
+     #! Return found plant if any || VALIDATE
+     ipdb.set_trace()
+     pass
 
-def check_condition(user):
+def check_condition(user, picked_plant):
     console.print("Your plant is in need of something! What does it need?")
     console.print("1. Does it need moisture? Type: [underline]Water[/]")
     console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
@@ -109,8 +120,8 @@ def check_condition(user):
         "nothing",
         # "plant status"
     ]:
-        user.update_user_action() #invoke correctly
-        user.compare_condition()
+        # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly 
+        # third argument ( ACTION ).compare_condition(selected_condition)
         console.print("You selected one of the options")
 
 
@@ -126,10 +137,6 @@ def view_rules():
     console.print(
         "4. Your plant information will be stored and you can always go back and lurk your failed attempts."
     )
-
-
-def view_scoreboard():
-    pass
 
 
 def delete_user():
@@ -167,5 +174,5 @@ def find_users():
     else:
         console.print("There are no users playing this game :(")
 
-def view_inventory():
-    pass
+def view_inventory(user):
+    console.print(user.plant(user)) if user.id == plant.user_id else None

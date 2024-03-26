@@ -18,8 +18,8 @@ class Plant:
         id=None,
     ):
         self.name = name
-        self._condition = self.random_condition()
-        self._phase = phase if phase else "Purchased"
+        self.condition = self.random_condition()
+        self._phase = phase or "Purchased"
         self.is_alive = is_alive
         self.id = id
 
@@ -74,7 +74,7 @@ class Plant:
         return random.choice(list_of_condition)
 
     #!Association Methods
-    def user(self):
+    def users(self):
         from models.user import User
         try:
             with CONN:
@@ -89,7 +89,7 @@ class Plant:
         except Exception as e:
             print("Error fetching user's plants:", e)
 
-    def action(self):
+    def actions(self):
         from models.action import Action
         try:
             with CONN:

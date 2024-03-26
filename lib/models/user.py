@@ -27,7 +27,7 @@ class User:
             self._name = new_name
 
     #!Association Methods
-    def plant(self):
+    def plants(self):
         from models.plant import Plant
         try:
             with CONN:
@@ -42,7 +42,7 @@ class User:
         except Exception as e:
             print("Error fetching user's plants:", e)
 
-    def action(self):
+    def actions(self):
         from models.action import Action
         try:
             with CONN:
