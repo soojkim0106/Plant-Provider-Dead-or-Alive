@@ -120,34 +120,33 @@ class Action:
         if type(self).user_action == "Purchased":
             self.compare_condition()
 
-    def compare_condition(self):
+    def compare_condition(self, user_action):
+
         plant = Plant.find_by_id(self.plant_id)
-        # if plant._condition == "Planted" or user_action == plant._condition:
-        if type(self).user_action == plant._condition:
-            return type(self).advance_phase()
+        if user_action == plant._condition:
+            return self.advance_phase()
         else:
-            return type(self).incorrect_condition()
-
+            return self.incorrect_condition()
+        
     def advance_phase(self):
-
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
             phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
             new_phase = type(self).phases[phase_index]
             plant.update_phase(new_phase)
-
+            
             self.phase_index = phase_index
             self.plant_phase = new_phase
             self.day = 1
             type(self).update(self)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
-
+        
     def incorrect_condition(self):
-        self.day += 1  #! ASCII ART RETURNS?
+        self.day += 1 
+        self.update()
         if self.day > 5:
             return self.make_dead()
-
     def make_dead(self):
         try:
             plant = Plant.find_by_id(self.plant_id)
@@ -156,10 +155,47 @@ class Action:
             return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
+            
+    # def compare_condition(self, user_action):
+    #     plant = Plant.find_by_id(self.plant_id)
+    #     # if plant._condition == "Planted" or user_action == plant._condition:
+    #     if type(self).user_action == plant._condition:
+    #         return type(self).advance_phase()
+    #     else:
+    #         return type(self).incorrect_condition(self)
 
-    def update_user_action(self, new_action):
-        type(self).user_action = new_action
-        # type(self).update(self)
+    # def advance_phase(self):
+
+    #     plant = Plant.find_by_id(self.plant_id)
+    #     if self.phase_index < len(self.phases) - 1:
+    #         phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
+    #         new_phase = type(self).phases[phase_index]
+    #         plant.update_phase(new_phase)
+
+    #         self.phase_index = phase_index
+    #         self.plant_phase = new_phase
+    #         self.day = 1
+    #         type(self).update(self)
+    #     else:
+    #         return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
+
+    # def incorrect_condition(self):
+    #     type(self).day += 1  #! ASCII ART RETURNS?
+    #     if self.day > 5:
+    #         return self.make_dead()
+
+    # def make_dead(self):
+    #     try:
+    #         plant = Plant.find_by_id(self.plant_id)
+    #         plant.is_alive = False
+    #         plant.update()
+    #         return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
+    #     except Exception as e:
+    #         print('Your plant didn\'t die successfully', e)
+
+    # def update_user_action(self, new_action):
+    #     type(self).user_action = new_action
+    #     # type(self).update(self)
 
     #! Utility ORM Class Methods
     @classmethod

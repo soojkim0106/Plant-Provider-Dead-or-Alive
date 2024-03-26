@@ -1,7 +1,5 @@
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
-from models.user import User
-from models.action import Action
 import random
 # import ipdb
 
@@ -68,16 +66,16 @@ class Plant:
 
     def update_phase(self, new_phase):
         type(self).phase = new_phase
-        type(self).update(self)
+        self.update()
 
     #! Method to calculate random value
     def random_condition(self):
         list_of_condition = ["Water", "Sunlight", "Nothing"]
         return random.choice(list_of_condition)
 
-        #!Association Methods
-
+    #!Association Methods
     def user(self):
+        from models.user import User
         try:
             with CONN:
                 CURSOR.execute(
@@ -92,6 +90,7 @@ class Plant:
             print("Error fetching user's plants:", e)
 
     def action(self):
+        from models.action import Action
         try:
             with CONN:
                 CURSOR.execute(
