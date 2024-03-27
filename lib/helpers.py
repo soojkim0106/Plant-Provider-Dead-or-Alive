@@ -329,7 +329,6 @@ def delete_user():
         console.print("Find yourself or create a new user!", style="bold")
         find_or_create_user()
 
-
 def view_inventory(user):
     inventory = (user.plants())
     console.print(inventory)
