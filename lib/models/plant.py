@@ -57,11 +57,12 @@ class Plant:
 
     @condition.setter
     def condition(self, _):
-        if self.phase != "Purchased":
-            plant_condition = self.random_condition()
-            self._condition = plant_condition
-        else:
-            self._condition = "Purchased"
+        # if self.phase != "Purchased":
+        # plant_condition = self.random_condition()
+        # self._condition = plant_condition
+        self.condition = self.random_condition()
+    # else:
+    #     self._condition = "Purchased"
 
     def update_phase(self, new_phase):
         self.phase = new_phase
@@ -267,6 +268,3 @@ class Plant:
                 self.id = None
         except Exception as e:
             print("We could not delete this plant:", e)
-
-
-
