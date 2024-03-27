@@ -45,22 +45,17 @@ def exit_program():
 def find_or_create_user():  # sourcery skip: extract-method
 
     name = input("Enter your username: ").strip()
-    ipdb.set_trace()
     if name.lower() in EXIT_WORDS:
         exit_program()
 
     user = User.find_by_name(name)
-
     if user is None:
         new_user = User.create(name)
         console.print(f"Welcome {new_user.name}!")
         [picked_plant, picked_plant_id] = pick_plant()
-        ipdb.set_trace()
         new_association = Action.create("Water", new_user.id, picked_plant_id)
-        ipdb.set_trace()
         console.print(f"Thank you for purchasing your new plant {picked_plant.name}!")
-        start_game(new_user, new_association, picked_plant)
-        ipdb.set_trace()
+        start_game(new_user, new_association, picked_plant)  
         return new_user
     else:
         [picked_plant, picked_plant_id] = pick_plant()
@@ -72,7 +67,6 @@ def find_or_create_user():  # sourcery skip: extract-method
         new_association = Action.create("Purchase", user.id, picked_plant_id)
         # retrieve plants information
         start_game(user, new_association, picked_plant)
-        ipdb.set_trace()
         return user
 
 
@@ -116,8 +110,7 @@ def start_game(user, new_association, picked_plant):
             exit_program()
 
         if user_input == "1":
-            check_condition(user, new_association, picked_plant)
-            ipdb.set_trace()
+            check_condition(user, new_association, picked_plant)  
         elif user_input == "2":
             view_inventory(user)
         elif user_input == "3":
@@ -125,8 +118,7 @@ def start_game(user, new_association, picked_plant):
         elif user_input == "4":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
-            check_condition(user, new_association, re_picked_plant)
-            ipdb.set_trace()
+            check_condition(user, new_association, re_picked_plant)    
         elif user_input == "5":
             user = find_or_create_user()
         elif user_input == "6":
@@ -137,7 +129,6 @@ def pick_plant():
     user_input = input("What's the name of plant you are looking for? ").strip().lower()
     if user_input in EXIT_WORDS:
         exit_program()
-
     if Plant.find_by_name(user_input):
         console.print(f"It's time to grow {user_input} ", style="bold")
         return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
@@ -152,7 +143,6 @@ def pick_plant():
 
 
 def check_condition(user, new_association, picked_plant):
-    ipdb.set_trace()
     if new_association is None:
         console.print("Error: new_association is not initialized.", style="bold red")
         return
@@ -328,7 +318,6 @@ def delete_user():
         console.print(f"Successfully deleted {username}")
         console.print("Find yourself or create a new user!", style="bold")
         find_or_create_user()
-
 
 def view_inventory(user):
     inventory = user.plants()
