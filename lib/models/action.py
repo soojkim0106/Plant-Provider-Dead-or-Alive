@@ -24,11 +24,11 @@ class Action:
 
     def __repr__(self):
         return (
-            f"<Action {self.id}: Day: {self.day} Action: {self.user_action},"
-            + f"User ID: {self.user_id},"
-            + f"Plant ID: {self.plant_id},"
-            + f"Phase Index: {self.phase_index},"
-            + f"Phase: {self.plant_phase}>"
+            f"<Action {self.id}: Day: {self.day} Action: {self.user_action}, "
+            + f"User ID: {self.user_id}, "
+            + f"Plant ID: {self.plant_id}, "
+            + f"Phase Index: {self.phase_index}, "
+            + f"Phase: {self.plant_phase}> "
         )
 
     #! Properties and Attributes

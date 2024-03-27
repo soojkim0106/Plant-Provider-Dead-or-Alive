@@ -72,7 +72,7 @@ def start_game(user, new_association, picked_plant):
         console.print("1. Pick your plant")
         console.print("2. View your plants")
         console.print("3. Delete User")
-        console.print("4. Back to main menu")
+        console.print("4. Plant died os is a flower? Select or purchase another!")
         console.print("5. Exit out of program")
 
         user_input = input("> ").strip().lower()
@@ -91,7 +91,9 @@ def start_game(user, new_association, picked_plant):
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
-            [picked_plant, picked_plant_id] = pick_plant()
+            [re_picked_plant, re_picked_plant_id] = pick_plant()
+            new_association = Action.create("Purchase", user.id, re_picked_plant_id)
+            check_condition(user, new_association, re_picked_plant)
         elif user_input == "5":
             exit_program()
 

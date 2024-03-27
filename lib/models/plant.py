@@ -60,7 +60,6 @@ class Plant:
         if self.phase != "Purchased":
             plant_condition = self.random_condition()
             self._condition = plant_condition
-            self._phase = self.phase
         else:
             self._condition = "Purchased"
 
