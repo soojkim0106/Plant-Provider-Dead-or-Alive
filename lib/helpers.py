@@ -17,6 +17,19 @@ def welcome():
 
 
 def menu():
+    console.print(
+        """
+                    _
+                  _(_)_                          wWWWw   _
+      @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
+     @@()@@ wWWWw  (_)\    (___)   _(_)_  @@()@@   Y  (_)@(_)
+      @@@@  (___)     `|/    Y    (_)@(_)  @@@@   \|/   (_)\
+       /      Y       \|    \|/    /(_)    \|      |/      |
+    \ |     \ |/       | / \ | /  \|/       |/    \|      \|/
+jgs \\|//   \\|///  \\\|//\\\|/// \|///  \\\|//  \\|//  \\\|// 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """
+    )
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
