@@ -34,8 +34,7 @@ def menu():
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
-    console.print("3. Find Plant")
-    console.print("4. Exit the program")
+    console.print("3. Exit the program")
 
 
 def exit_program():
@@ -46,7 +45,7 @@ def exit_program():
 def find_or_create_user():  # sourcery skip: extract-method
 
     name = input("Enter your username: ").strip()
-
+    ipdb.set_trace()
     if name.lower() in EXIT_WORDS:
         exit_program()
 
@@ -55,16 +54,13 @@ def find_or_create_user():  # sourcery skip: extract-method
     if user is None:
         new_user = User.create(name)
         console.print(f"Welcome {new_user.name}!")
-        # plant_name = input("Enter your plant's name: ").strip()
-
-        # if plant_name.lower() in EXIT_WORDS:
-        #     exit_program()
         [picked_plant, picked_plant_id] = pick_plant()
-        # new_plant = Plant.create(plant_name)
-        new_association = Action.create("Purchase", new_user.id, picked_plant_id)
-        #
+        ipdb.set_trace()
+        new_association = Action.create("Water", new_user.id, picked_plant_id)
+        ipdb.set_trace()
         console.print(f"Thank you for purchasing your new plant {picked_plant.name}!")
         start_game(new_user, new_association, picked_plant)
+        ipdb.set_trace()
         return new_user
     else:
         [picked_plant, picked_plant_id] = pick_plant()
@@ -76,11 +72,11 @@ def find_or_create_user():  # sourcery skip: extract-method
         new_association = Action.create("Purchase", user.id, picked_plant_id)
         # retrieve plants information
         start_game(user, new_association, picked_plant)
+        ipdb.set_trace()
         return user
 
 
 def start_game(user, new_association, picked_plant):
-    # console.print("Welcome to Plant Provider: Dead or Alive!")
     while True:
         # click.clear()
         console.print(
@@ -121,20 +117,20 @@ def start_game(user, new_association, picked_plant):
 
         if user_input == "1":
             check_condition(user, new_association, picked_plant)
+            ipdb.set_trace()
         elif user_input == "2":
             view_inventory(user)
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
-
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
             check_condition(user, new_association, re_picked_plant)
+            ipdb.set_trace()
         elif user_input == "5":
             user = find_or_create_user()
         elif user_input == "6":
             exit_program()
-
 
 def pick_plant():
     # click.clear()
@@ -156,8 +152,15 @@ def pick_plant():
 
 
 def check_condition(user, new_association, picked_plant):
+    ipdb.set_trace()
+    if new_association is None:
+        console.print("Error: new_association is not initialized.", style="bold red")
+        return
     while True:
-        if not new_association.plant().is_alive:
+        plant = new_association.plant()
+        if plant is None:
+            console.print("Error: Plant not found.", style="bold red")
+        if not plant.is_alive:
             console.print(
                 """
                 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣤⣤⣶⣶⣿⣷⣆⠀⠀⠀⠀
@@ -180,7 +183,7 @@ def check_condition(user, new_association, picked_plant):
                 f"[bold red]Plant {new_association.plant().name} is no longer alive."
             )
             break
-        if new_association.plant().phase == "Flower":
+        if plant.phase == "Flower":
             console.print(
                 """
             .-.'  '.-.
@@ -327,16 +330,6 @@ def delete_user():
         find_or_create_user()
 
 
-def find_plant():
-    plant = input("What plant are you looking for?: ").strip()
-
-    if plant.lower() in EXIT_WORDS:
-        exit_program()
-
-    plant_list = Plant.users(plant)
-    console.print(plant_list)
-
-
 def view_inventory(user):
-    inventory = User.plants(user)
+    inventory = user.plants()
     console.print(inventory)

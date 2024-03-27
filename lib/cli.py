@@ -5,7 +5,6 @@ from helpers import(
     menu,
     find_or_create_user,
     view_rules,
-    find_plant,
     exit_program
 )
 
@@ -23,8 +22,6 @@ def main():
         elif choice == '2':
             view_rules()
         elif choice == '3':
-            find_plant()
-        elif choice == '4':
             exit_program()
         else:
             print("Invalid input")

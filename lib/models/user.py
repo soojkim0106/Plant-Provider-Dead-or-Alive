@@ -33,7 +33,7 @@ class User:
             with CONN:
                 CURSOR.execute(
                     """
-                        SELECT plant_id FROM actions WHERE user_id =?
+                        SELECT DISTINCT plant_id FROM actions WHERE user_id =?
                     """,
                     (self.id,)
                 )
