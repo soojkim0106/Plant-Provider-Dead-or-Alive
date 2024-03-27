@@ -146,16 +146,17 @@ class Action:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
         
     def incorrect_condition(self):
-        self.day += 1 
-        self.update()
         if self.day > 3:
             return self.make_dead()
+        else:
+            self.day += 1 
+            self.update()
     def make_dead(self):
         try:
             plant = Plant.find_by_id(self.plant_id)
             plant.is_alive = False
             plant.update()
-            return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
+            # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
             

@@ -49,12 +49,12 @@ def find_or_create_user():  # sourcery skip: extract-method
         [picked_plant, picked_plant_id] = pick_plant()
         # new_plant = Plant.create(plant_name)
         new_association = Action.create("Purchase", new_user.id, picked_plant_id)
-        ipdb.set_trace()
+        # ipdb.set_trace()
         console.print(f"Thank you for purchasing your new plant {picked_plant}!")
         start_game(user, new_association, picked_plant)
     else:
         [picked_plant, picked_plant_id] = pick_plant()
-        ipdb.set_trace()
+        # ipdb.set_trace()
         console.print(
             f"Welcome back {user.name}! Your plant {picked_plant} waiting for you!",
             style="bold",
@@ -91,9 +91,41 @@ def start_game(user, new_association, picked_plant):
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
-            pass
+            [picked_plant, picked_plant_id] = pick_plant()
         elif user_input == "5":
             exit_program()
+
+
+# def resume_game(user, new_association, picked_plant):
+#     # console.print("Welcome to Plant Provider: Dead or Alive!")
+#     while True:
+#         click.clear()
+#         console.print("Please select one of the options below: ")
+#         console.print("1. Pick your plant")
+#         console.print("2. View your plants")
+#         console.print("3. Delete User")
+#         console.print("4. Back to main menu")
+#         console.print("5. Exit out of program")
+
+#         user_input = input("> ").strip().lower()
+
+#         if user_input in EXIT_WORDS:
+#             exit_program()
+
+#         if user_input == "1":
+#             # [picked_plant_id, picked_plant_name] = pick_plant()
+#             #! Find the action given to the given the id of picked_plant and given id of user
+#             #! Find the action that connects plant and user
+#             check_condition(user, new_association, picked_plant)  #! third argument
+#             ipdb.set_trace()
+#         elif user_input == "2":
+#             view_inventory(user)
+#         elif user_input == "3":
+#             delete_user()
+#         elif user_input == "4":
+#             pass
+#         elif user_input == "5":
+#             exit_program()
 
 
 def pick_plant():
@@ -112,41 +144,55 @@ def pick_plant():
 
 
 def check_condition(user, new_association, picked_plant):
+
     ipdb.set_trace()
-    # click.clear()
-    console.print("Your plant is in need of something! What does it need?")
-    console.print("1. Does it need moisture? Type: [underline]Water[/]")
-    console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
-    console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
-    # console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
-    selected_condition = input("What does your plant need?: ")
+    while True:
+        if not new_association.plant().is_alive:
+            console.print(
+                f"Plant {new_association.plant().name} is no longer alive."
+            )
+            break
+        if new_association.plant().phase == "Flower":
+            console.print(
+                f"The {new_association.plant().name} is fully grown and produced a seed!!!"
+            )
+            break
+        # click.clear()
+        console.print("Your plant is in need of something! What does it need?")
+        console.print("1. Does it need moisture? Type: [underline]Water[/]")
+        console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
+        console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
+        # console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
+        selected_condition = input("What does your plant need?: ")
 
-    if selected_condition in EXIT_WORDS:
-        exit_program()
+        if selected_condition in EXIT_WORDS:
+            exit_program()
 
-    if selected_condition not in [
-        "Water",
-        "Sunlight",
-        "Nothing"
-        # "Check status"
-    ]:
-        console.print("Please pick one of the provided options!")
-        return check_condition(user, new_association, picked_plant)
+        if selected_condition not in [
+            "Water",
+            "Sunlight",
+            "Nothing"
+            # "Check status"
+        ]:
+            console.print("Please pick one of the provided options!")
+            return check_condition(user, new_association, picked_plant)
 
-    # while selected_condition == picked_plant.condition:
-    if selected_condition in [
-        "Water",
-        "Sunlight",
-        "Nothing"
-        # "Check status"
-    ]:
-        new_association.update_user_action( selected_condition)
-        new_association.compare_condition( selected_condition, picked_plant)
-        console.print("You selected one of the options")
-        # return check_condition(user, new_association, picked_plant)
-        return check_condition(user, new_association, picked_plant)
-    # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly
-    # third argument ( ACTION ).compare_condition(selected_condition)
+        # while selected_condition == picked_plant.condition:
+        if selected_condition in [
+            "Water",
+            "Sunlight",
+            "Nothing"
+            # "Check status"
+        ]:
+            new_association.update_user_action(selected_condition)
+            new_association.compare_condition(
+                selected_condition, new_association.plant()
+            )
+            console.print("You selected one of the options")
+            # return check_condition(user, new_association, picked_plant)
+            # return check_condition(user, new_association, picked_plant)
+        # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly
+        # third argument ( ACTION ).compare_condition(selected_condition)
 
 
 def view_rules():

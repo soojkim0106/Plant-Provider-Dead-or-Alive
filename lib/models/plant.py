@@ -13,13 +13,13 @@ class Plant:
         self,
         name,
         condition="Planted",
-        phase=None,
+        phase="Purchased",
         is_alive=True,
         id=None,
     ):
         self.name = name
         self._condition = self.random_condition()
-        self._phase = phase or "Purchased"
+        self._phase = phase
         self.is_alive = is_alive
         self.id = id
 
