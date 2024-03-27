@@ -34,7 +34,8 @@ def menu():
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
-    console.print("3. Exit the program")
+    console.print("3. Find Plant")
+    console.print("4. Exit the program")
 
 
 def exit_program():
@@ -103,6 +104,13 @@ def start_game(user, new_association, picked_plant):
             "Please select one of the options below: ",
             style="bold underline green on white",
         )
+            """,
+            style="green",
+        )
+        console.print(
+            "Please select one of the options below: ",
+            style="bold underline green on white",
+        )
         console.print(f"1. Take care of the [underline]{picked_plant.name}")
         console.print("2. View your plants")
         console.print("3. Delete User")
@@ -117,13 +125,13 @@ def start_game(user, new_association, picked_plant):
 
         if user_input == "1":
             check_condition(user, new_association, picked_plant)
-            ipdb.set_trace()
         elif user_input == "2":
             view_inventory(user)
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
+
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
             check_condition(user, new_association, re_picked_plant)
             ipdb.set_trace()
@@ -131,6 +139,7 @@ def start_game(user, new_association, picked_plant):
             user = find_or_create_user()
         elif user_input == "6":
             exit_program()
+
 
 
 def pick_plant():
@@ -182,6 +191,12 @@ def check_condition(user, new_association, picked_plant):
             console.print(
                 f"[bold red]Plant {new_association.plant().name} is no longer alive."
             )
+                """,
+                style="red",
+            )
+            console.print(
+                f"[bold red]Plant {new_association.plant().name} is no longer alive."
+            )
             break
         if plant.phase == "Flower":
             console.print(
@@ -208,11 +223,18 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 """,
                 style="yellow",
             )
+                """,
+                style="yellow",
+            )
             console.print(
                 f"[bold green]The {new_association.plant().name} is fully grown and produced a seed!!!"
             )
             break
         # click.clear()
+        console.print(
+            "Your plant is in need of something! What does it need?",
+            style="bold underline green on white",
+        )
         console.print(
             "Your plant is in need of something! What does it need?",
             style="bold underline green on white",
@@ -297,7 +319,12 @@ _\.\/|   /'--'oOOOOOOo'--'"
 """,
                 style="red",
             )
+""",
+                style="red",
+            )
             console.print(
+                f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}",
+                style="bold",
                 f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}",
                 style="bold",
             )
@@ -326,6 +353,7 @@ def delete_user():
     if user := User.find_by_name(username):
         user.delete()
         console.print(f"Successfully deleted {username}")
+        console.print("Find yourself or create a new user!", style="bold")
         console.print("Find yourself or create a new user!", style="bold")
         find_or_create_user()
 
