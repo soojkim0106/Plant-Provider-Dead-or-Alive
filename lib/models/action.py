@@ -2,7 +2,7 @@ from models.__init__ import CONN, CURSOR
 from models.plant import Plant
 from models.user import User
 from sqlite3 import IntegrityError
-# import ipdb
+import ipdb
 
 
 class Action:
@@ -90,9 +90,20 @@ class Action:
             raise ValueError("Plant phase must be a valid phase")
         else:
             self._plant_phase = plant_phase
-            self.phase_index = self.phases.index(
-                plant_phase
-            )  #! can separate properties and attributes
+
+    @property
+    def phase_index(self):
+        return self._phase_index
+
+    @phase_index.setter
+    def phase_index(self, phase_index):
+        if not isinstance(phase_index, int):
+            raise TypeError("phase_index must be an integer")
+        elif phase_index < 0 or phase_index >= len(self.phases):
+            raise ValueError("phase_index must be a valid index for phases")
+        else:
+            self._phase_index = phase_index
+            self._plant_phase = self.phases[phase_index]
 
     @property
     def user_action(self):
@@ -100,10 +111,14 @@ class Action:
 
     @user_action.setter
     def user_action(self, user_action):
+        ipdb.set_trace()
+        # valid_actions = ["Water", "Sunlight", "Nothing"]
         if not isinstance(user_action, str):
             raise TypeError(
                 "user_action must be a string"
-            )  #! We have to validate this somewhere ["Water", "Sunlight", "Nothing"]
+            )
+        # elif user_action not in valid_actions:
+        #     raise ValueError(f"user_action must be one of {valid_actions}")
         else:
             self._user_action = user_action
 
@@ -160,47 +175,6 @@ class Action:
             # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
-
-    # def compare_condition(self, user_action):
-    #     plant = Plant.find_by_id(self.plant_id)
-    #     # if plant._condition == "Planted" or user_action == plant._condition:
-    #     if type(self).user_action == plant._condition:
-    #         return type(self).advance_phase()
-    #     else:
-    #         return type(self).incorrect_condition(self)
-
-    # def advance_phase(self):
-
-    #     plant = Plant.find_by_id(self.plant_id)
-    #     if self.phase_index < len(self.phases) - 1:
-    #         phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
-    #         new_phase = type(self).phases[phase_index]
-    #         plant.update_phase(new_phase)
-
-    #         self.phase_index = phase_index
-    #         self.plant_phase = new_phase
-    #         self.day = 1
-    #         type(self).update(self)
-    #     else:
-    #         return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
-
-    # def incorrect_condition(self):
-    #     type(self).day += 1  #! ASCII ART RETURNS?
-    #     if self.day > 5:
-    #         return self.make_dead()
-
-    # def make_dead(self):
-    #     try:
-    #         plant = Plant.find_by_id(self.plant_id)
-    #         plant.is_alive = False
-    #         plant.update()
-    #         return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
-    #     except Exception as e:
-    #         print('Your plant didn\'t die successfully', e)
-
-    # def update_user_action(self, new_action):
-    #     type(self).user_action = new_action
-    #     # type(self).update(self)
 
     #! Utility ORM Class Methods
     @classmethod

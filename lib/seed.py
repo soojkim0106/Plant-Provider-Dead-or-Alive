@@ -29,8 +29,8 @@ def seed_plantsy():
     plant3 = Plant.create("sunflower")
 
     action1 = Action.create("Water", user1.id, plant1.id)
-    action2 = Action.create("Action 2", user1.id, plant2.id)
-    action3 = Action.create("Action 2", user2.id, plant3.id)
+    action2 = Action.create("Water", user1.id, plant2.id)
+    action3 = Action.create("Water", user2.id, plant3.id)
     
     # ipdb.set_trace()
 
