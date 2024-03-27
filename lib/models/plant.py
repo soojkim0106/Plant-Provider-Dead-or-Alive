@@ -12,7 +12,7 @@ class Plant:
     def __init__(
         self,
         name,
-        condition="Planted",
+        condition="None",
         phase="Purchased",
         is_alive=True,
         id=None,
@@ -21,6 +21,7 @@ class Plant:
         self._condition = (
             condition if condition == "Planted" else self.random_condition()
         )
+        # self._condition = condition
         self._phase = phase
         self.is_alive = is_alive
         self.id = id
@@ -59,12 +60,11 @@ class Plant:
 
     @condition.setter
     def condition(self, _):
-        # if self.phase != "Purchased":
-        # plant_condition = self.random_condition()
-        # self._condition = plant_condition
-        self.condition = self.random_condition()
-    # else:
-    #     self._condition = "Purchased"
+        if self.phase == "Purchased":
+            self.condition = "Water"
+        else:
+            self.condition = self.random_condition()
+        self.update()
 
     def update_phase(self, new_phase):
         self.phase = new_phase
