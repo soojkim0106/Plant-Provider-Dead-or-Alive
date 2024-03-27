@@ -150,26 +150,27 @@ def check_condition(user, new_association, picked_plant):
         if selected_condition in ["Plant Status"]:
             console.print(f"{new_association.plant()}")
 
-        if selected_condition not in [
+        while selected_condition not in [
             "Water",
             "Sunlight",
             "Nothing",
         ]:
             console.print("Please pick one of the provided options!")
-            return check_condition(user, new_association, picked_plant)
+            selected_condition = input("What does your plant need?: ")
 
-        if selected_condition in [
-            "Water",
-            "Sunlight",
-            "Nothing",
-        ]:
-            new_association.update_user_action(selected_condition)
-            new_association.compare_condition(
-                selected_condition, new_association.plant()
+        new_association.update_user_action(selected_condition)
+        condition_matched = new_association.is_condition_matched(
+            selected_condition, new_association.plant()
+        )
+        new_association.process_condition(condition_matched)
+        if condition_matched:
+            console.print(
+                f"You selected the correct condition! Your plant is now a {new_association.plant().phase}"
             )
-            console.print("You selected one of the options")
-            return check_condition(user, new_association, picked_plant)
-
+        else:
+            console.print(
+                f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}"
+            )
 
 def view_rules():
     welcome()

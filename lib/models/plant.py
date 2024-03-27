@@ -18,7 +18,9 @@ class Plant:
         id=None,
     ):
         self.name = name
-        self._condition = self.random_condition()
+        self._condition = (
+            condition if condition == "Planted" else self.random_condition()
+        )
         self._phase = phase
         self.is_alive = is_alive
         self.id = id

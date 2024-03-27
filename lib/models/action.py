@@ -119,32 +119,33 @@ class Action:
     def start_phase(self):
         if type(self).user_action == "Purchased":
             self.update_user_action("Planted")
-    
+
     def update_user_action(self, new_action):
         self.user_action = new_action
 
-    def compare_condition(self, user_action, plant):
+    def is_condition_matched(self, user_action, plant):
+        return user_action == plant.condition
 
-        # plant = Plant.find_by_id(self.plant_id)
-        if user_action == plant.condition:
+    def process_condition(self, is_condition_matched):
+        if is_condition_matched:
             return self.advance_phase()
         else:
             return self.incorrect_condition()
-        
+
     def advance_phase(self):
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
             phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
             new_phase = type(self).phases[phase_index]
             plant.update_phase(new_phase)
-            
+
             self.phase_index = phase_index
             self.plant_phase = new_phase
             self.day = 1
             type(self).update(self)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
-        
+
     def incorrect_condition(self):
         if self.day > 3:
             return self.make_dead()
@@ -159,7 +160,7 @@ class Action:
             # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
-            
+
     # def compare_condition(self, user_action):
     #     plant = Plant.find_by_id(self.plant_id)
     #     # if plant._condition == "Planted" or user_action == plant._condition:
