@@ -118,7 +118,7 @@ class Action:
 
     def start_phase(self):
         if type(self).user_action == "Purchased":
-            self.compare_condition()
+            self.update_user_action("Planted")
     
     def update_user_action(self, new_action):
         self.user_action = new_action

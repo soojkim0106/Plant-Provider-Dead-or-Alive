@@ -44,16 +44,17 @@ def find_or_create_user():  # sourcery skip: extract-method
         console.print(f"Welcome {new_user.name}!")
         # plant_name = input("Enter your plant's name: ").strip()
 
-
         # if plant_name.lower() in EXIT_WORDS:
         #     exit_program()
-        [picked_plant_id, picked_plant] = pick_plant()
+        [picked_plant, picked_plant_id] = pick_plant()
         # new_plant = Plant.create(plant_name)
         new_association = Action.create("Purchase", new_user.id, picked_plant_id)
+        ipdb.set_trace()
         console.print(f"Thank you for purchasing your new plant {picked_plant}!")
         start_game(user, new_association, picked_plant)
     else:
-        [picked_plant_id, picked_plant] = pick_plant()
+        [picked_plant, picked_plant_id] = pick_plant()
+        ipdb.set_trace()
         console.print(
             f"Welcome back {user.name}! Your plant {picked_plant} waiting for you!",
             style="bold",
@@ -65,33 +66,34 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user, new_association, picked_plant):
     # console.print("Welcome to Plant Provider: Dead or Alive!")
-    click.clear()
-    console.print("Please select one of the options below: ")
-    console.print("1. Pick your plant")
-    console.print("2. View your plants")
-    console.print("3. Delete User")
-    console.print("4. Back to main menu")
-    console.print("5. Exit out of program")
+    while True:
+        click.clear()
+        console.print("Please select one of the options below: ")
+        console.print("1. Pick your plant")
+        console.print("2. View your plants")
+        console.print("3. Delete User")
+        console.print("4. Back to main menu")
+        console.print("5. Exit out of program")
 
-    user_input = input("> ").strip().lower()
+        user_input = input("> ").strip().lower()
 
-    if user_input in EXIT_WORDS:
-        exit_program()
+        if user_input in EXIT_WORDS:
+            exit_program()
 
-    if user_input == "1":
-        # [picked_plant_id, picked_plant_name] = pick_plant()
-        #! Find the action given to the given the id of picked_plant and given id of user
-        #! Find the action that connects plant and user
-        check_condition(user, new_association, picked_plant)  #! third argument
-        ipdb.set_trace()
-    elif user_input == "2":
-        view_inventory(user)
-    elif user_input == "3":
-        delete_user()
-    elif user_input == "4":
-        pass
-    elif user_input == "5":
-        exit_program()
+        if user_input == "1":
+            # [picked_plant_id, picked_plant_name] = pick_plant()
+            #! Find the action given to the given the id of picked_plant and given id of user
+            #! Find the action that connects plant and user
+            check_condition(user, new_association, picked_plant)  #! third argument
+            ipdb.set_trace()
+        elif user_input == "2":
+            view_inventory(user)
+        elif user_input == "3":
+            delete_user()
+        elif user_input == "4":
+            pass
+        elif user_input == "5":
+            exit_program()
 
 
 def pick_plant():
@@ -110,6 +112,7 @@ def pick_plant():
 
 
 def check_condition(user, new_association, picked_plant):
+    ipdb.set_trace()
     # click.clear()
     console.print("Your plant is in need of something! What does it need?")
     console.print("1. Does it need moisture? Type: [underline]Water[/]")
@@ -137,11 +140,11 @@ def check_condition(user, new_association, picked_plant):
         "Nothing"
         # "Check status"
     ]:
-        new_association.update_user_action(user, selected_condition)
-        new_association.compare_condition(user, selected_condition, picked_plant)
+        new_association.update_user_action( selected_condition)
+        new_association.compare_condition( selected_condition, picked_plant)
         console.print("You selected one of the options")
         # return check_condition(user, new_association, picked_plant)
-
+        return check_condition(user, new_association, picked_plant)
     # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly
     # third argument ( ACTION ).compare_condition(selected_condition)
 
