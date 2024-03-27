@@ -7,7 +7,7 @@ import click
 import ipdb
 
 console = Console()
-EXIT_WORDS = ["6", "exit", "quit", "c"]
+EXIT_WORDS = ["exit", "quit", "c"]
 
 
 def welcome():
@@ -23,19 +23,17 @@ def menu():
                   _(_)_                          wWWWw   _
       @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
      @@()@@ wWWWw  (_)\    (___)   _(_)_  @@()@@   Y  (_)@(_)
-      @@@@  (___)     `|/    Y    (_)@(_)  @@@@   \|/   (_)\
+      @@@@  (___)     `|/    Y    (_)@(_)  @@@@   \|/   (_)|
        /      Y       \|    \|/    /(_)    \|      |/      |
     \ |     \ |/       | / \ | /  \|/       |/    \|      \|/
-jgs \\|//   \\|///  \\\|//\\\|/// \|///  \\\|//  \\|//  \\\|// 
+    |||//   |||///  ||\|//""\|/// \|///  ||\|//  |||//  ||\|// 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    """
-    )
+        """
+    , style='yellow')
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
-    console.print("3. Find User")
-    console.print("4. Find Users")
-    console.print("5. Exit the program")
+    console.print("3. Exit the program")
 
 
 def exit_program():
@@ -62,15 +60,15 @@ def find_or_create_user():  # sourcery skip: extract-method
         [picked_plant, picked_plant_id] = pick_plant()
         # new_plant = Plant.create(plant_name)
         new_association = Action.create("Purchase", new_user.id, picked_plant_id)
-        # ipdb.set_trace()
-        console.print(f"Thank you for purchasing your new plant {picked_plant}!")
+        # 
+        console.print(f"Thank you for purchasing your new plant {picked_plant.name}!")
         start_game(new_user, new_association, picked_plant)
         return new_user
     else:
         [picked_plant, picked_plant_id] = pick_plant()
-        # ipdb.set_trace()
+        # 
         console.print(
-            f"Welcome back {user.name}! Your plant {picked_plant} waiting for you!",
+            f"Welcome back {user.name}! Your plant {picked_plant.name} waiting for you!",
             style="bold",
         )
         new_association = Action.create("Purchase", user.id, picked_plant_id)
@@ -82,9 +80,32 @@ def find_or_create_user():  # sourcery skip: extract-method
 def start_game(user, new_association, picked_plant):
     # console.print("Welcome to Plant Provider: Dead or Alive!")
     while True:
-        click.clear()
-        console.print("Please select one of the options below: ")
-        console.print("1. Pick your plant")
+# The `click.clear()` function is used to clear the terminal screen. It is commonly used in
+# command-line interfaces to provide a clean and organized display for the user. When `click.clear()`
+# is called, it clears the output on the terminal screen, making it easier for the user to read the
+# new content that will be displayed.
+        # click.clear()
+        console.print(
+            """
+                ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣿⢉⣩⠉⣛⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⣿⣿⣿⣿⡿⠟⢋⣥⢶⣞⡷⣦⡙⠋⣡⣤⣌⠙⢧⣤⡖⠀⠙⣿⣿⣿⣿⣿⣿⡿⠿⠿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⣿⣿⣿⣿⣤⣈⡛⠋⠿⠾⠽⠓⠃⠸⠛⢳⣯⡷⣄⢙⣧⣤⢤⠘⣿⣿⣿⣿⠏⣰⣿⣦⠘⠿⠿⠋⣴⣷⣦⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⣿⣿⣿⣿⢿⣿⠉⣉⣄⡘⢿⡆⠄⢠⠀⣼⠁⠘⣾⠏⠻⣦⠀⠤⣿⠿⠿⠏⣸⣿⣿⣿⣇⡄⣄⣼⣿⣿⣿⡧⠹⠿⢿⣿⣿⣿⣿⣿⣿⣿
+                ⣿⡿⠋⠁⢢⣤⣤⠿⠋⠁⣘⡃⠐⠘⠀⢈⣸⠄⠿⠐⡆⢿⡻⢀⣿⠶⠂⡀⣼⣟⢁⣹⡟⠈⣻⣏⢈⣿⣧⠀⢂⠘⠿⣿⣿⣿⣿⣿⣿⣿
+                ⡿⢛⣉⣩⣴⠯⠋⣠⣾⢿⣻⢽⣷⠀⠀⣉⣉⡙⠲⣶⣷⣦⣤⣾⣿⡟⣰⣿⣿⡿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣧⠸⣿⣿⣿⣿⣿⣿⣿
+                ⢁⣈⡉⢳⣯⣷⢾⡻⠽⢏⡇⢀⠙⠀⠀⡿⣯⢿⣳⠘⣿⣿⣿⣿⡿⠁⠏⣩⣤⣶⣶⣷⡄⢀⠂⣈⠙⢿⣿⣿⣿⡏⠀⢹⣿⣿⣿⣿⣿⣿
+                ⡋⣤⣶⡏⢠⠘⣿⠇⢠⠸⡷⠈⡆⠀⠀⡙⠫⢿⡽⠀⣿⣿⣿⢋⡴⠀⠀⢹⣿⣿⣿⣿⣿⡈⠁⠀⣴⣾⣿⣿⣿⣿⣦⠄⢻⣿⣿⣿⣿⣿
+                ⣇⡙⠚⢁⣾⣀⠛⣃⣸⣤⣴⣿⣿⠀⠀⣿⣷⣶⣶⣾⣿⣿⣧⡈⢠⣑⠢⠸⣿⣿⣿⣿⡿⠿⢀⣾⣿⣿⣿⣿⣿⣿⣇⠀⠘⣿⣿⣿⣿⣿
+                ⣿⣿⣿⣿⣿⣿⣿⡇⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⠄⣿⣿⣿⡇⣸⣿⣿⣄⣛⣉⣩⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⡆⢿⣿⣿⣿⣿
+                ⣿⣿⣿⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠆⣿⣿⣿⡇⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢸⣿⣿⣿⣿
+                ⣿⣿⣿⣿⣿⣿⣿⣷⣬⠉⣉⣉⣉⣉⣉⣉⣉⣉⠉⣤⣿⣿⣿⡇⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡧⢸⣿⠋⠀⠙
+                ⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿⣿⣿⣿⣿⣿⣿⡟⢸⣿⣿⣿⣿⣷⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠛⠁⠺⠖⣰
+                ⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣿⠇⣾⣿⣿⣿⣿⡟⢡⣌⢙⣿⣿⣿⣿⣿⣿⣿⠟⣙⠛⢿⣿⣿⣿⣿⣿⡟⠀⠸⠃⣀⣴⣿
+                ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣬⣭⣭⣩⣍⣭⣭⣤⣿⣿⣿⣿⣿⣿⣦⣬⣭⣭⣭⣭⣭⣙⣉⣋⣀⣉⣉⣋⣩⣭⣭⣭⣥⣤⣶⣾⣿⣿⣿⣿
+            """
+        , style='green')
+        console.print("Please select one of the options below: ", style="bold underline green on white")
+        console.print(f"1. Take care of the [underline]{picked_plant.name}")
         console.print("2. View your plants")
         console.print("3. Delete User")
         console.print("4. Plant died or is a flower? Select or purchase another!")
@@ -98,14 +119,14 @@ def start_game(user, new_association, picked_plant):
 
         if user_input == "1":
             check_condition(user, new_association, picked_plant)
-            ipdb.set_trace()
+            
         elif user_input == "2":
             view_inventory(user)
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
-            ipdb.set_trace()
+            
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
             check_condition(user, new_association, re_picked_plant)
         elif user_input == "5":
@@ -114,6 +135,7 @@ def start_game(user, new_association, picked_plant):
             exit_program()
 
 def pick_plant():
+    # click.clear()
     user_input = input("What's the name of plant you are looking for? ").strip().lower()
     if user_input in EXIT_WORDS:
         exit_program()
@@ -132,27 +154,65 @@ def pick_plant():
 
 
 def check_condition(user, new_association, picked_plant):
-
-    ipdb.set_trace()
     while True:
         if not new_association.plant().is_alive:
-            console.print(f"Plant {new_association.plant().name} is no longer alive.")
+            console.print(
+                """
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣤⣤⣶⣶⣿⣷⣆⠀⠀⠀⠀
+                ⠀⠀⠀⢀⣤⣤⣶⣶⣾⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⣿⡆⠀⠀⠀
+                ⠀⢀⣴⣿⣿⣿⣿⣿⣿⡿⠛⠉⠉⠀⠀⠀⣿⣿⣿⣿⣷⠀⠀⠀
+                ⣠⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⢤⣶⣾⠿⢿⣿⣿⣿⣿⣇⠀⠀
+                ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠈⠉⠀⠀⠀⣿⣿⣿⣿⣿⡆⠀
+                ⢸⣿⣿⣿⣏⣿⣿⣿⣿⣿⣷⠀⠀⢠⣤⣶⣿⣿⣿⣿⣿⣿⣿⡀
+                ⠀⢿⣿⣿⣿⡸⣿⣿⣿⣿⣿⣇⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣧
+                ⠀⠸⣿⣿⣿⣷⢹⣿⣿⣿⣿⣿⣄⣀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⠀⠀⢻⣿⣿⣿⡇⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⠀⠀⠘⣿⣿⣿⣿⠘⠻⠿⢛⣛⣭⣽⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                ⠀⠀⠀⢹⣿⣿⠏⠀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋
+                ⠀⠀⠀⠈⣿⠏⠀⣰⣿⣿⣿⣿⣿⣿⠿⠟⠛⠋⠉⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⢠⡿⠿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                """
+            , style='red')
+            console.print(f"[bold red]Plant {new_association.plant().name} is no longer alive.")
             break
         if new_association.plant().phase == "Flower":
             console.print(
-                f"The {new_association.plant().name} is fully grown and produced a seed!!!"
+                """
+            .-.'  '.-.
+          .-(   \  /   )-.
+         /   '..oOOo..'   "
+ ,       \.--.oOOOOOOo.--./
+ |\  ,   (   :oOOOOOOo:   )
+_\.\/|   /'--'oOOOOOOo'--'"
+'-.. ;/| \   .''oOOo''.   /
+.--`'. :/|'-(   /  \   )-'
+ '--. `. / //'-'.__.'-;
+   `'-,_';//      ,  /|
+        '((       |\/./_
+          \\  . |\; ..-'
+           \\ |\: .'`--.
+            \\, .' .--'
+             ))'_,-'`
+       vsn  //-'
+           // 
+          //
+         |/
+                """
+            , style='yellow')
+            console.print(
+                f"[bold green]The {new_association.plant().name} is fully grown and produced a seed!!!"
             )
             break
         # click.clear()
-        console.print("Your plant is in need of something! What does it need?")
-        console.print("1. Does it need moisture? Type: [underline]Water[/]")
-        console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
+        console.print("Your plant is in need of something! What does it need?", style="bold underline green on white")
+        console.print("1. Does it need moisture? Type: [underline blue]Water[/]")
+        console.print("2. Does it need sunlight? Type: [underline yellow]Sunlight[/]")
         console.print(
-            "3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!"
+            "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]!"
         )
-        console.print("4. Would you like to check your plant's status? Type: [underline]Plant Status[/]")
-        console.print("5. Return to the user menu [underline]Back[/]!")
-        selected_condition = input("What does your plant need?: ")
+        console.print("4. Would you like to check your plant's status? Type: [underline green]Plant Status[/]")
+        console.print("5. Return to the user menu. Type: [underline]Back[/]!")
+        selected_condition = input("What does your plant need?: ").capitalize()
 
         if selected_condition in EXIT_WORDS:
             exit_program()
@@ -168,8 +228,8 @@ def check_condition(user, new_association, picked_plant):
             "Sunlight",
             "Nothing",
         ]:
-            console.print("Please pick one of the provided options!")
-            selected_condition = input("What does your plant need?: ")
+            console.print("Please pick one of the provided options!", style="bold")
+            selected_condition = input("What does your plant need?: ").capitalize()
 
         new_association.update_user_action(selected_condition)
         condition_matched = new_association.is_condition_matched(
@@ -178,11 +238,50 @@ def check_condition(user, new_association, picked_plant):
         new_association.process_condition(condition_matched)
         if condition_matched:
             console.print(
-                f"You selected the correct condition! Your plant is now a {new_association.plant().phase}"
+                """
+░░░░░░░░░░░░░░░░░░░░░░█████████
+░░███████░░░░░░░░░░███▒▒▒▒▒▒▒▒███
+░░█▒▒▒▒▒▒█░░░░░░░███▒▒▒▒▒▒▒▒▒▒▒▒▒███
+░░░█▒▒▒▒▒▒█░░░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+░░░░█▒▒▒▒▒█░░░██▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒███
+░░░░░█▒▒▒█░░░█▒▒▒▒▒▒████▒▒▒▒████▒▒▒▒▒▒██
+░░░█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+░░░█▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒██
+░██▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██
+██▒▒▒███████████▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒▒██
+█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒████████▒▒▒▒▒▒▒██
+██▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+░█▒▒▒███████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+░██▒▒▒▒▒▒▒▒▒▒████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█
+░░████████████░░░█████████████████
+"""
+            , style="blue")
+            console.print(
+                f"You selected the correct condition! Your plant is now a {new_association.plant().phase}", style="bold"
             )
         else:
             console.print(
-                f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}"
+                """
+          ██████████          
+      ████▒▒▒▒▒▒▒▒▒▒████      
+    ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██    
+  ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██  
+  ██▒▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██  
+██▒▒▒▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒▒▒▒██
+██▒▒▒▒▒▒▒▒▒▒██▒▒██▒▒▒▒▒▒▒▒▒▒██
+██▒▒▒▒▒▒▒▒████▒▒████▒▒▒▒▒▒▒▒██
+██▒▒▒▒▒▒▒▒████▒▒████▒▒▒▒▒▒▒▒██
+██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
+  ██▒▒▒▒▒▒▒▒██████▒▒▒▒▒▒▒▒██  
+  ██▒▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒▒██  
+    ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██    
+      ████▒▒▒▒▒▒▒▒▒▒████      
+          ██████████          
+
+"""
+            , style="red")
+            console.print(
+                f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}", style="bold"
             )
 
 def view_rules():
@@ -208,33 +307,36 @@ def delete_user():
     if user := User.find_by_name(username):
         user.delete()
         console.print(f"Successfully deleted {username}")
+        console.print("Find yourself or create a new user!", style = 'bold')
+        find_or_create_user()
 
 
-def find_user():
-    name = input("Enter your username: ").strip()
+# def find_user():
+#     name = input("Enter your username: ").strip()
 
-    if name.lower() in EXIT_WORDS:
-        exit_program()
+#     if name.lower() in EXIT_WORDS:
+#         exit_program()
 
-    if user := User.find_by_name(name):
-        (
-            console.print(f"You already created an username {name} with us!")
-            if user
-            else print("No username exists")
-        )
-    else:
-        console.print("No user exist in our database")
+#     if user := User.find_by_name(name):
+#         (
+#             console.print(f"You already created an username {name} with us!")
+#             if user
+#             else print("No username exists")
+#         )
+#     else:
+#         console.print("No user exist in our database")
 
 
-def find_users():
+# def find_users():
 
-    if users := User.get_all():
-        for user in users:
-            print(user)
-    else:
-        console.print("There are no users playing this game :(")
+#     if users := User.get_all():
+#         for user in users:
+#             print(user)
+#     else:
+#         console.print("There are no users playing this game :(")
 
 
 def view_inventory(user):
     inventory = User.plants(user)
     console.print(inventory)
+
