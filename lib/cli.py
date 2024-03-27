@@ -5,12 +5,10 @@ from helpers import(
     menu,
     find_or_create_user,
     view_rules,
-    find_user,
-    find_users,
     exit_program
 )
 
-EXIT_WORDS = ["5", "exit", "quit", "c"]
+EXIT_WORDS = ["3", "exit", "quit", "c"]
 
 def main():
     welcome()
@@ -24,10 +22,6 @@ def main():
         elif choice == '2':
             view_rules()
         elif choice == '3':
-            find_user()
-        elif choice =='4':
-            find_users()
-        elif choice == '5':
             exit_program()
         else:
             print("Invalid input")
