@@ -7,7 +7,7 @@ import click
 import ipdb
 
 console = Console()
-EXIT_WORDS = ["5", "exit", "quit", "c"]
+EXIT_WORDS = ["6", "exit", "quit", "c"]
 
 
 def welcome():
@@ -17,6 +17,19 @@ def welcome():
 
 
 def menu():
+    console.print(
+        """
+                    _
+                  _(_)_                          wWWWw   _
+      @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
+     @@()@@ wWWWw  (_)\    (___)   _(_)_  @@()@@   Y  (_)@(_)
+      @@@@  (___)     `|/    Y    (_)@(_)  @@@@   \|/   (_)\
+       /      Y       \|    \|/    /(_)    \|      |/      |
+    \ |     \ |/       | / \ | /  \|/       |/    \|      \|/
+jgs \\|//   \\|///  \\\|//\\\|/// \|///  \\\|//  \\|//  \\\|// 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """
+    )
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
@@ -42,99 +55,135 @@ def find_or_create_user():  # sourcery skip: extract-method
     if user is None:
         new_user = User.create(name)
         console.print(f"Welcome {new_user.name}!")
-        plant_name = input("Enter your plant's name: ").strip()
+        # plant_name = input("Enter your plant's name: ").strip()
 
-        if plant_name.lower() in EXIT_WORDS:
+        # if plant_name.lower() in EXIT_WORDS:
+        #     exit_program()
+        [picked_plant, picked_plant_id] = pick_plant()
+        # new_plant = Plant.create(plant_name)
+        new_association = Action.create("Purchase", new_user.id, picked_plant_id)
+        # ipdb.set_trace()
+        console.print(f"Thank you for purchasing your new plant {picked_plant}!")
+        start_game(new_user, new_association, picked_plant)
+        return new_user
+    else:
+        [picked_plant, picked_plant_id] = pick_plant()
+        # ipdb.set_trace()
+        console.print(
+            f"Welcome back {user.name}! Your plant {picked_plant} waiting for you!",
+            style="bold",
+        )
+        new_association = Action.create("Purchase", user.id, picked_plant_id)
+        # retrieve plants information
+        start_game(user, new_association, picked_plant)
+        return user
+
+
+def start_game(user, new_association, picked_plant):
+    # console.print("Welcome to Plant Provider: Dead or Alive!")
+    while True:
+        click.clear()
+        console.print("Please select one of the options below: ")
+        console.print("1. Pick your plant")
+        console.print("2. View your plants")
+        console.print("3. Delete User")
+        console.print("4. Plant died or is a flower? Select or purchase another!")
+        console.print("5. Switch user")
+        console.print("6. Exit out of program")
+
+        user_input = input("> ").strip().lower()
+
+        if user_input in EXIT_WORDS:
             exit_program()
 
-        new_plant = Plant.create(plant_name)
-        new_association = Action.create("Purchase", new_user.id, new_plant.id)
-        console.print(f"Thank you for purchasing your new plant {new_plant.name}!")
-    else:
-        console.print(f"Welcome back {user.name}! Your plant is waiting for you!", style="bold")
-        #retrieve plants information
-
-    start_game(user)
-
-
-def start_game(user):
-    # console.print("Welcome to Plant Provider: Dead or Alive!")
-    click.clear()
-    console.print("Please select one of the options below: ")
-    console.print("1. Pick your plant")
-    console.print("2. View your plants")
-    console.print("3. Delete User")
-    console.print("4. Back to main menu")
-    console.print("5. Exit out of program")
-
-    user_input = input("> ").strip().lower()
-    
-    if user_input in EXIT_WORDS:
-        exit_program()
-
-    if user_input == "1":
-        picked_plant = pick_plant()
-        #! Find the action given to the given the id of picked_plant and given id of user
-        #! Find the action that connects plant and user
-        check_condition(user, picked_plant)#! third argument
-        ipdb.set_trace()
-    elif user_input == "2":
-        view_inventory(user)
-    elif user_input == "3":
-        delete_user()
-    elif user_input == "4":
-        pass
-    elif user_input == "5":
-        exit_program()
+        if user_input == "1":
+            check_condition(user, new_association, picked_plant)
+            ipdb.set_trace()
+        elif user_input == "2":
+            view_inventory(user)
+        elif user_input == "3":
+            delete_user()
+        elif user_input == "4":
+            [re_picked_plant, re_picked_plant_id] = pick_plant()
+            ipdb.set_trace()
+            new_association = Action.create("Purchase", user.id, re_picked_plant_id)
+            check_condition(user, new_association, re_picked_plant)
+        elif user_input == "5":
+            user = find_or_create_user()
+        elif user_input == "6":
+            exit_program()
 
 def pick_plant():
     user_input = input("What's the name of plant you are looking for? ").strip().lower()
     if user_input in EXIT_WORDS:
         exit_program()
-        
+
     if Plant.find_by_name(user_input):
         console.print(f"It's time to grow {user_input} ", style="bold")
+        return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
     else:
+        _ = Plant.create(user_input)
         console.print("The plant name you mentioned does not exist")
-        pick_plant()
-
-def check_condition(user, picked_plant):
-    # click.clear()
-    console.print("Your plant is in need of something! What does it need?")
-    console.print("1. Does it need moisture? Type: [underline]Water[/]")
-    console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
-    console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
-    console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
-    selected_condition = input("What does your plant need?: ")
-
-    
-    if selected_condition in EXIT_WORDS:
-        exit_program()
-
-    if selected_condition not in [
-        "water",
-        "sunlight",
-        "nothing",
-        "check status"
-    ]:
-        console.print("Please pick one of the provided options!")
-        return check_condition(user)
-
-    if selected_condition == "water" and picked_plant.condition:
-        pass
+        console.print(
+            f"As your plant did not already exist, you purchased {user_input}",
+            style="bold",
+        )
+        return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
 
 
-    
-    # if selected_condition in [
-    #     "water",
-    #     "sunlight",
-    #     "nothing",
-    #     "check status"
-    # ]:
-        # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly 
-        # third argument ( ACTION ).compare_condition(selected_condition)
-        # console.print("You selected one of the options")
+def check_condition(user, new_association, picked_plant):
 
+    ipdb.set_trace()
+    while True:
+        if not new_association.plant().is_alive:
+            console.print(f"Plant {new_association.plant().name} is no longer alive.")
+            break
+        if new_association.plant().phase == "Flower":
+            console.print(
+                f"The {new_association.plant().name} is fully grown and produced a seed!!!"
+            )
+            break
+        # click.clear()
+        console.print("Your plant is in need of something! What does it need?")
+        console.print("1. Does it need moisture? Type: [underline]Water[/]")
+        console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
+        console.print(
+            "3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!"
+        )
+        console.print("4. Would you like to check your plant's status? Type: [underline]Plant Status[/]")
+        console.print("5. Return to the user menu [underline]Back[/]!")
+        selected_condition = input("What does your plant need?: ")
+
+        if selected_condition in EXIT_WORDS:
+            exit_program()
+
+        if selected_condition in ["Back"]:
+            start_game(user, new_association, picked_plant)
+
+        if selected_condition in ["Plant Status"]:
+            console.print(f"{new_association.plant()}")
+
+        while selected_condition not in [
+            "Water",
+            "Sunlight",
+            "Nothing",
+        ]:
+            console.print("Please pick one of the provided options!")
+            selected_condition = input("What does your plant need?: ")
+
+        new_association.update_user_action(selected_condition)
+        condition_matched = new_association.is_condition_matched(
+            selected_condition, new_association.plant()
+        )
+        new_association.process_condition(condition_matched)
+        if condition_matched:
+            console.print(
+                f"You selected the correct condition! Your plant is now a {new_association.plant().phase}"
+            )
+        else:
+            console.print(
+                f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}"
+            )
 
 def view_rules():
     welcome()
@@ -184,6 +233,7 @@ def find_users():
             print(user)
     else:
         console.print("There are no users playing this game :(")
+
 
 def view_inventory(user):
     inventory = User.plants(user)

@@ -12,19 +12,22 @@ class Plant:
     def __init__(
         self,
         name,
-        condition="Planted",
-        phase=None,
+        condition="None",
+        phase="Purchased",
         is_alive=True,
         id=None,
     ):
         self.name = name
-        self._condition = self.random_condition()
-        self._phase = phase or "Purchased"
+        self._condition = (
+            condition if condition == "Planted" else self.random_condition()
+        )
+        # self._condition = condition
+        self._phase = phase
         self.is_alive = is_alive
         self.id = id
 
     def __repr__(self):
-        return f"<Plant {self.id}: Name: {self.name}, Current Phase: {self.phase}, Condition: {self.condition}, Alive: {self.is_alive}>"
+        return f"<Plant {self.id}: Plant Name: {self.name}, Current Phase: {self.phase}, Alive: {self.is_alive}>"
 
     #! Properties and Attributes
     @property
@@ -57,12 +60,11 @@ class Plant:
 
     @condition.setter
     def condition(self, _):
-        if self.phase != "Purchased":
-            plant_condition = self.random_condition()
-            self._condition = plant_condition
-            self._phase = self.phase
+        if self.phase == "Purchased":
+            self.condition = "Water"
         else:
-            self._condition = "Purchased"
+            self.condition = self.random_condition()
+        self.update()
 
     def update_phase(self, new_phase):
         self.phase = new_phase
@@ -268,6 +270,3 @@ class Plant:
                 self.id = None
         except Exception as e:
             print("We could not delete this plant:", e)
-
-
-

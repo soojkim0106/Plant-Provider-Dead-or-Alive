@@ -24,11 +24,11 @@ class Action:
 
     def __repr__(self):
         return (
-            f"<Action {self.id}: Day: {self.day} Action: {self.user_action},"
-            + f"User ID: {self.user_id},"
-            + f"Plant ID: {self.plant_id},"
-            + f"Phase Index: {self.phase_index},"
-            + f"Phase: {self.plant_phase}>"
+            f"<Action {self.id}: Day: {self.day} Action: {self.user_action}, "
+            + f"User ID: {self.user_id}, "
+            + f"Plant ID: {self.plant_id}, "
+            + f"Phase Index: {self.phase_index}, "
+            + f"Phase: {self.plant_phase}> "
         )
 
     #! Properties and Attributes
@@ -118,47 +118,49 @@ class Action:
 
     def start_phase(self):
         if type(self).user_action == "Purchased":
-            self.compare_condition()
-    
+            self.update_user_action("Planted")
+
     def update_user_action(self, new_action):
         self.user_action = new_action
 
-    def compare_condition(self, user_action, plant):
+    def is_condition_matched(self, user_action, plant):
+        return user_action == plant.condition
 
-        # plant = Plant.find_by_id(self.plant_id)
-        if user_action == plant.condition:
+    def process_condition(self, is_condition_matched):
+        if is_condition_matched:
             return self.advance_phase()
         else:
             return self.incorrect_condition()
-        
+
     def advance_phase(self):
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
             phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
             new_phase = type(self).phases[phase_index]
             plant.update_phase(new_phase)
-            
+
             self.phase_index = phase_index
             self.plant_phase = new_phase
             self.day = 1
             type(self).update(self)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
-        
+
     def incorrect_condition(self):
-        self.day += 1 
-        self.update()
         if self.day > 3:
             return self.make_dead()
+        else:
+            self.day += 1 
+            self.update()
     def make_dead(self):
         try:
             plant = Plant.find_by_id(self.plant_id)
             plant.is_alive = False
             plant.update()
-            return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
+            # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print('Your plant didn\'t die successfully', e)
-            
+
     # def compare_condition(self, user_action):
     #     plant = Plant.find_by_id(self.plant_id)
     #     # if plant._condition == "Planted" or user_action == plant._condition:
@@ -253,6 +255,7 @@ class Action:
             return plant
         except Exception as e:
             print("Error fetching plant from database:", e)
+            raise e
 
     @classmethod
     def get_all(cls):
