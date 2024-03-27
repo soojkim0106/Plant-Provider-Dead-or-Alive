@@ -110,8 +110,7 @@ class Action:
         return self._user_action
 
     @user_action.setter
-    def user_action(self, user_action):
-        ipdb.set_trace()
+    def user_action(self, user_action):     
         # valid_actions = ["Water", "Sunlight", "Nothing"]
         if not isinstance(user_action, str):
             raise TypeError(
