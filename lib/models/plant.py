@@ -24,7 +24,7 @@ class Plant:
         self.id = id
 
     def __repr__(self):
-        return f"<Plant {self.id}: Name: {self.name}, Current Phase: {self.phase}, Condition: {self.condition}, Alive: {self.is_alive}>"
+        return f"<Plant {self.id}: Plant Name: {self.name}, Current Phase: {self.phase}, Alive: {self.is_alive}>"
 
     #! Properties and Attributes
     @property
