@@ -59,8 +59,9 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user):
     # console.print("Welcome to Plant Provider: Dead or Alive!")
+    click.clear()
     console.print("Please select one of the options below: ")
-    console.print("1. Take care of your plant")
+    console.print("1. Pick your plant")
     console.print("2. View your plants")
     console.print("3. Delete User")
     console.print("4. Back to main menu")
@@ -76,6 +77,7 @@ def start_game(user):
         #! Find the action given to the given the id of picked_plant and given id of user
         #! Find the action that connects plant and user
         check_condition(user, picked_plant)#! third argument
+        ipdb.set_trace()
     elif user_input == "2":
         view_inventory(user)
     elif user_input == "3":
@@ -86,20 +88,26 @@ def start_game(user):
         exit_program()
 
 def pick_plant():
-     #! Find by name of plant that you want to take care of
-     #! check conditional
-     #! Return found plant if any || VALIDATE
-     ipdb.set_trace()
-     pass
+    user_input = input("What's the name of plant you are looking for? ").strip().lower()
+    if user_input in EXIT_WORDS:
+        exit_program()
+        
+    if Plant.find_by_name(user_input):
+        console.print(f"It's time to grow {user_input} ", style="bold")
+    else:
+        console.print("The plant name you mentioned does not exist")
+        pick_plant()
 
 def check_condition(user, picked_plant):
+    # click.clear()
     console.print("Your plant is in need of something! What does it need?")
     console.print("1. Does it need moisture? Type: [underline]Water[/]")
     console.print("2. Does it need sunlight? Type: [underline]Sunlight[/]")
     console.print("3. Your plant might be satisfied as is! Type: [underline]Nothing[/]!")
     console.print("4. Would you like to check your plant's status? Type: [underline]Check status[/]")
-    selected_condition = input("What does your plant need?: ").strip().lower()
+    selected_condition = input("What does your plant need?: ")
 
+    
     if selected_condition in EXIT_WORDS:
         exit_program()
 
@@ -112,17 +120,20 @@ def check_condition(user, picked_plant):
         console.print("Please pick one of the provided options!")
         return check_condition(user)
 
-    if selected_condition == "check status":
-        return user.plant()
-    if selected_condition in [
-        "water",
-        "sunlight",
-        "nothing",
-        # "plant status"
-    ]:
+    if selected_condition == "water" and picked_plant.condition:
+        pass
+
+
+    
+    # if selected_condition in [
+    #     "water",
+    #     "sunlight",
+    #     "nothing",
+    #     "check status"
+    # ]:
         # third argument ( ACTION ).update_user_action(selected_condition) #invoke correctly 
         # third argument ( ACTION ).compare_condition(selected_condition)
-        console.print("You selected one of the options")
+        # console.print("You selected one of the options")
 
 
 def view_rules():
@@ -175,4 +186,5 @@ def find_users():
         console.print("There are no users playing this game :(")
 
 def view_inventory(user):
-    console.print(user.plant(user)) if user.id == plant.user_id else None
+    inventory = User.plants(user)
+    console.print(inventory)
