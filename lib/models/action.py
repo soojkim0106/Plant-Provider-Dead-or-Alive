@@ -253,6 +253,7 @@ class Action:
             return plant
         except Exception as e:
             print("Error fetching plant from database:", e)
+            raise e
 
     @classmethod
     def get_all(cls):
