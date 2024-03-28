@@ -2,7 +2,7 @@ import re
 import hashlib
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
-import ipdb
+import secrets
 class User:
 
     #! User will require update if scoreboard is True
@@ -33,7 +33,7 @@ class User:
                 new_password
                 if self.password_is_hashed
                 else hashlib.sha256(new_password.encode()).hexdigest())
-        # ipdb.set_trace()
+
 
     @property
     def name(self):
@@ -134,19 +134,19 @@ class User:
         except Exception as e:
             print("Error fetching user from database:", e)
 
-    @classmethod
-    def get_all(cls):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-                        SELECT * FROM users;
-                    """
-                )
-                rows = CURSOR.fetchall()
-                return [cls.instance_from_db(row) for row in rows]
-        except Exception as e:
-            print("Error fetching all users:", e)
+    # @classmethod
+    # def get_all(cls):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #                     SELECT * FROM users;
+    #                 """
+    #             )
+    #             rows = CURSOR.fetchall()
+    #             return [cls.instance_from_db(row) for row in rows]
+    #     except Exception as e:
+    #         print("Error fetching all users:", e)
 
     @classmethod
     def find_by_name(cls, name):
@@ -252,12 +252,19 @@ class User:
             print("Error updating password:", e)
 
     def authenticate(self, password):
-        # ipdb.set_trace()
+
         if hasattr(self, "_password"):
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
             return self.password == hashed_password
         else:
             return False
 
-    def hash_password(self, password):
-        return hashlib.sha256(password.encode()).hexdigest()
+    # def hash_password(self, password):
+    #     return hashlib.sha256(password.encode()).hexdigest()
+
+    def hash_password(self, password, salt=None):
+        if salt is None:
+            salt = secrets.token_hex(16) 
+        hashed_password = hashlib.sha256((password + salt).encode()).hexdigest()
+
+        return hashed_password, salt

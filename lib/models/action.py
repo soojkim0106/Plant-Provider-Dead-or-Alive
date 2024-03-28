@@ -177,7 +177,6 @@ class Action:
             plant = Plant.find_by_id(self.plant_id)
             plant.is_alive = False
             plant.update()
-            # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
             print("Your plant didn't die successfully", e)
 
@@ -236,53 +235,53 @@ class Action:
             print("Error fetching plant from database:", e)
             raise e
 
-    @classmethod
-    def get_all(cls):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-            SELECT * FROM actions;
-        """
-                )
-                actions = CURSOR.fetchall()
-                return [
-                    cls.instance_from_db(user_action) for user_action in actions
-                ]  #! Should be user_action arg?
-        except Exception as e:
-            print("Error fetching all actions:", e)
+    # @classmethod
+    # def get_all(cls):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #         SELECT * FROM actions;
+    #     """
+    #             )
+    #             actions = CURSOR.fetchall()
+    #             return [
+    #                 cls.instance_from_db(user_action) for user_action in actions
+    #             ]  #! Should be user_action arg?
+    #     except Exception as e:
+    #         print("Error fetching all actions:", e)
 
-    @classmethod
-    def find_by_user_action(cls, user_action):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-                        SELECT * FROM actions 
-                        WHERE user_action = ?;
-                    """,
-                    (user_action,),
-                )
-                user_action = CURSOR.fetchone()
-                return cls.instance_from_db(user_action) if user_action else None
-        except Exception as e:
-            print("Error fetching plant by action:", e)
+    # @classmethod
+    # def find_by_user_action(cls, user_action):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #                     SELECT * FROM actions 
+    #                     WHERE user_action = ?;
+    #                 """,
+    #                 (user_action,),
+    #             )
+    #             user_action = CURSOR.fetchone()
+    #             return cls.instance_from_db(user_action) if user_action else None
+    #     except Exception as e:
+    #         print("Error fetching plant by action:", e)
 
-    @classmethod
-    def find_by_id(cls, id):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-                        SELECT * FROM actions 
-                        WHERE id = ?;
-                    """,
-                    (id,),
-                )
-                user_action = CURSOR.fetchone()
-                return cls.instance_from_db(user_action) if user_action else None
-        except Exception as e:
-            print("Error fetching action by id:", e)
+    # @classmethod
+    # def find_by_id(cls, id):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #                     SELECT * FROM actions 
+    #                     WHERE id = ?;
+    #                 """,
+    #                 (id,),
+    #             )
+    #             user_action = CURSOR.fetchone()
+    #             return cls.instance_from_db(user_action) if user_action else None
+    #     except Exception as e:
+    #         print("Error fetching action by id:", e)
 
     #! ORM instance method
     def save(self):
@@ -333,17 +332,17 @@ class Action:
         except Exception as e:
             print("Error updating action:", e)
 
-    def delete(self):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-                        DELETE FROM actions WHERE id =?;
-                    """,
-                    (self.id,),
-                )
-                CONN.commit()
-                del type(self).all[self.id]
-                self.id = None
-        except Exception as e:
-            print("We could not delete this action:", e)
+    # def delete(self):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #                     DELETE FROM actions WHERE id =?;
+    #                 """,
+    #                 (self.id,),
+    #             )
+    #             CONN.commit()
+    #             del type(self).all[self.id]
+    #             self.id = None
+    #     except Exception as e:
+    #         print("We could not delete this action:", e)
