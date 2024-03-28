@@ -25,8 +25,11 @@ def seed_plantsy():
     user2 = User.create("Jane", "Passw0rd!")
 
     plant1 = Plant.create("bonsai")
-    plant2 = Plant.create("blossom")
+    plant2 = Plant.create("rose")
     plant3 = Plant.create("sunflower")
+    plant4 = Plant.create("cactus")
+    plant5 = Plant.create("jasmine")
+    plant6 = Plant.create("hyacinth")
 
     action1 = Action.create("Water", user1.id, plant1.id)
     action2 = Action.create("Water", user1.id, plant2.id)

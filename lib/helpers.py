@@ -82,7 +82,7 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user, new_association, picked_plant):
     while True:
-        click.clear()
+        # click.clear()
         console.print(
             """
                 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣿⢉⣩⠉⣛⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -347,7 +347,7 @@ def update_password(user):
 
 def view_plants():
     click.clear()
-    console.print("Currently, the store has these plants: ", style='bold')
+    console.print("Currently, our store has these plants: ", style='bold')
     for plant in Plant.get_all():
         console.print(plant.name, style="green")
     
