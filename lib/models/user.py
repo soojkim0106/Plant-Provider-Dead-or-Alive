@@ -233,11 +233,9 @@ class User:
             print("We could not delete this user:", e)
 
     def update_password(self, new_password):
-        # Hash the new password
         hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
         try:
             with CONN:
-                # Update the user's password in the database
                 CURSOR.execute(
                     """
                         UPDATE users
@@ -247,7 +245,6 @@ class User:
                     (hashed_password, self.id),
                 )
                 CONN.commit()
-                # Update the password in the current User instance
                 self.password = hashed_password
                 self.password_is_hashed = True
 
