@@ -21,8 +21,8 @@ def create_tables():
 
 def seed_plantsy():
 
-    user1 = User.create("Bob")
-    user2 = User.create("Jane")
+    user1 = User.create("Bob", "Passw0rd!")
+    user2 = User.create("Jane", "Passw0rd!")
 
     plant1 = Plant.create("bonsai")
     plant2 = Plant.create("blossom")
@@ -31,14 +31,13 @@ def seed_plantsy():
     action1 = Action.create("Water", user1.id, plant1.id)
     action2 = Action.create("Water", user1.id, plant2.id)
     action3 = Action.create("Water", user2.id, plant3.id)
-    
+
     # ipdb.set_trace()
 
 def start_program():
     drop_tables()
     create_tables()
     seed_plantsy()
-
 
 
 if __name__ == "__main__":

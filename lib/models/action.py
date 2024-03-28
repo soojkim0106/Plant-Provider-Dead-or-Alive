@@ -12,7 +12,14 @@ class Action:
     phases = ["Purchased", "Seed", "Bud", "Sapling", "Flower"]
 
     def __init__(
-        self, user_action, user_id, plant_id, day=1, phase_index=0, plant_phase="Purchased", id=None
+        self,
+        user_action,
+        user_id,
+        plant_id,
+        day=1,
+        phase_index=0,
+        plant_phase="Purchased",
+        id=None,
     ):
         self.user_action = user_action
         self.user_id = user_id
@@ -110,14 +117,9 @@ class Action:
         return self._user_action
 
     @user_action.setter
-    def user_action(self, user_action):     
-        # valid_actions = ["Water", "Sunlight", "Nothing"]
+    def user_action(self, user_action):
         if not isinstance(user_action, str):
-            raise TypeError(
-                "user_action must be a string"
-            )
-        # elif user_action not in valid_actions:
-        #     raise ValueError(f"user_action must be one of {valid_actions}")
+            raise TypeError("user_action must be a string")
         else:
             self._user_action = user_action
 
@@ -149,23 +151,27 @@ class Action:
     def advance_phase(self):
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
-            phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
-            new_phase = type(self).phases[phase_index]
-            plant.update_phase(new_phase)
-
-            self.phase_index = phase_index
-            self.plant_phase = new_phase
-            self.day = 1
-            type(self).update(self)
+            self.update_phase_details(plant)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
+
+    def update_phase_details(self, plant):
+        phase_index = self.phase_index + 1
+        new_phase = type(self).phases[phase_index]
+        plant.update_phase(new_phase)
+
+        self.phase_index = phase_index
+        self.plant_phase = new_phase
+        self.day = 1
+        type(self).update(self)
 
     def incorrect_condition(self):
         if self.day > 3:
             return self.make_dead()
         else:
-            self.day += 1 
+            self.day += 1
             self.update()
+
     def make_dead(self):
         try:
             plant = Plant.find_by_id(self.plant_id)
@@ -173,7 +179,7 @@ class Action:
             plant.update()
             # return f"Plant {plant.name} is no longer alive."  #! this part in CLI helpers?
         except Exception as e:
-            print('Your plant didn\'t die successfully', e)
+            print("Your plant didn't die successfully", e)
 
     #! Utility ORM Class Methods
     @classmethod
@@ -240,7 +246,9 @@ class Action:
         """
                 )
                 actions = CURSOR.fetchall()
-                return [cls.instance_from_db(user_action) for user_action in actions] #! Should be user_action arg?
+                return [
+                    cls.instance_from_db(user_action) for user_action in actions
+                ]  #! Should be user_action arg?
         except Exception as e:
             print("Error fetching all actions:", e)
 
@@ -285,7 +293,14 @@ class Action:
                         INSERT INTO actions (user_action, user_id, plant_id, day, phase_index, plant_phase)
                         VALUES (?,?,?,?,?,?);
                     """,
-                    (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index, self.plant_phase),
+                    (
+                        self.user_action,
+                        self.user_id,
+                        self.plant_id,
+                        self.day,
+                        self.phase_index,
+                        self.plant_phase,
+                    ),
                 )
                 self.id = CURSOR.lastrowid
                 type(self).all[self.id] = self
@@ -302,12 +317,21 @@ class Action:
                     """
                     UPDATE actions SET user_action = ?, user_id = ?, plant_id = ?, day = ?, phase_index = ?, plant_phase = ?
                     WHERE id = ? 
-                    """, (self.user_action, self.user_id, self.plant_id, self.day, self.phase_index, self.plant_phase, self.id,),
+                    """,
+                    (
+                        self.user_action,
+                        self.user_id,
+                        self.plant_id,
+                        self.day,
+                        self.phase_index,
+                        self.plant_phase,
+                        self.id,
+                    ),
                 )
             type(self).all[self.id] = self
             return self
         except Exception as e:
-            print('Error updating action:', e)
+            print("Error updating action:", e)
 
     def delete(self):
         try:
