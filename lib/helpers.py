@@ -230,10 +230,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
         console.print(
             "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]!"
         )
-        console.print(
-            "4. Would you like to check your plant's status? Type: [underline green]Status[/]"
-        )
-        console.print("5. Return to the user menu. Type: [underline]Back[/]!")
+        console.print("4. Return to the user menu. Type: [underline]Back[/]!")
         selected_condition = input("What does your plant need?: ").capitalize()
 
         if selected_condition in EXIT_WORDS:
@@ -241,9 +238,6 @@ _\.\/|   /'--'oOOOOOOo'--'"
 
         if selected_condition in ["Back"]:
             start_game(user, new_association, picked_plant)
-
-        if selected_condition in ["Status"]:
-            console.print(f"{new_association.plant()}")
 
         while selected_condition not in ["Water", "Sunlight", "Nothing"]:
             console.print("Please pick one of the provided options!", style="bold")
@@ -277,7 +271,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
             )
             console.print(
                 f"You selected the correct condition! Your plant is now a {new_association.plant().phase}",
-                style="bold",
+                style="bold yellow",
             )
         else:
             console.print(
@@ -303,7 +297,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
             )
             console.print(
                 f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}",
-                style="bold",
+                style="bold yellow",
             )
 
 
