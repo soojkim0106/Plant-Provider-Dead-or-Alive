@@ -243,6 +243,8 @@ class Plant:
 
     def update(self):
         try:
+            if not hasattr(self, '_condition') or not hasattr(self, '_phase'):
+                raise AttributeError("Missing required attributes")
             with CONN:
                 CURSOR.execute(
                     """

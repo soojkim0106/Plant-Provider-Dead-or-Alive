@@ -111,13 +111,10 @@ class Action:
 
     @user_action.setter
     def user_action(self, user_action):     
-        # valid_actions = ["Water", "Sunlight", "Nothing"]
         if not isinstance(user_action, str):
             raise TypeError(
                 "user_action must be a string"
             )
-        # elif user_action not in valid_actions:
-        #     raise ValueError(f"user_action must be one of {valid_actions}")
         else:
             self._user_action = user_action
 
@@ -146,19 +143,23 @@ class Action:
         else:
             return self.incorrect_condition()
 
+
     def advance_phase(self):
         plant = Plant.find_by_id(self.plant_id)
         if self.phase_index < len(self.phases) - 1:
-            phase_index = self.phase_index + 1  # sourcery skip: extract-method #! Refractor
-            new_phase = type(self).phases[phase_index]
-            plant.update_phase(new_phase)
-
-            self.phase_index = phase_index
-            self.plant_phase = new_phase
-            self.day = 1
-            type(self).update(self)
+            self.update_phase_details(plant)
         else:
             return "The plant is fully grown and produced a seed!!!"  #! ASCII ART?
+
+    def update_phase_details(self, plant):
+        phase_index = self.phase_index + 1
+        new_phase = type(self).phases[phase_index]
+        plant.update_phase(new_phase)
+
+        self.phase_index = phase_index
+        self.plant_phase = new_phase
+        self.day = 1
+        type(self).update(self)
 
     def incorrect_condition(self):
         if self.day > 3:
