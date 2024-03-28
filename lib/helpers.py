@@ -53,7 +53,7 @@ def find_or_create_user():  # sourcery skip: extract-method
         password = input("Enter your password: ").strip()
         new_user = User.create(name, password)
         if new_user is None:
-            console.print("Error creating user: Invalid password")
+            console.print("Error creating user: Invalid password. Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character ")
             return find_or_create_user()
         console.print(f"Welcome {new_user.name}!")
         [picked_plant, picked_plant_id] = pick_plant()
@@ -223,7 +223,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
             "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]!"
         )
         console.print(
-            "4. Would you like to check your plant's status? Type: [underline green]Plant Status[/]"
+            "4. Would you like to check your plant's status? Type: [underline green]Status[/]"
         )
         console.print("5. Return to the user menu. Type: [underline]Back[/]!")
         selected_condition = input("What does your plant need?: ").capitalize()
@@ -234,13 +234,13 @@ _\.\/|   /'--'oOOOOOOo'--'"
         if selected_condition in ["Back"]:
             start_game(user, new_association, picked_plant)
 
-        if selected_condition in ["Plant Status"]:
+        if selected_condition in ["Status"]:
             console.print(f"{new_association.plant()}")
 
         while selected_condition not in [
             "Water",
             "Sunlight",
-            "Nothing",
+            "Nothing"
         ]:
             console.print("Please pick one of the provided options!", style="bold")
             selected_condition = input("What does your plant need?: ").capitalize()
@@ -331,7 +331,7 @@ def delete_user():
 
 def view_inventory(user):
     inventory = user.plants()
-    console.print(inventory)
+    console.print(f"You currently own these plant(s): {inventory}")
 
 def update_password(user):
     new_password = input("Enter your new password: ").strip()
