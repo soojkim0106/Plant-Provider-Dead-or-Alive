@@ -40,6 +40,7 @@ class Plant:
             raise TypeError("Name must be a string")
         elif len(new_name) < 2:
             raise ValueError("Name must be 2 or more characters")
+            
         else:
             self._name = new_name
 
@@ -149,6 +150,7 @@ class Plant:
                 return new_plant
         except Exception as e:
             print("Error creating new plant:", e)
+            return None
 
     @classmethod
     def instance_from_db(cls, row):
@@ -243,8 +245,6 @@ class Plant:
 
     def update(self):
         try:
-            if not hasattr(self, '_condition') or not hasattr(self, '_phase'):
-                raise AttributeError("Missing required attributes")
             with CONN:
                 CURSOR.execute(
                     """
@@ -258,17 +258,17 @@ class Plant:
         except Exception as e:
             print("Error updating plant:", e)
 
-    def delete(self):
-        try:
-            with CONN:
-                CURSOR.execute(
-                    """
-                        DELETE FROM plants WHERE id =?;
-                    """,
-                    (self.id,),
-                )
-                CONN.commit()
-                del type(self).all[self.id]
-                self.id = None
-        except Exception as e:
-            print("We could not delete this plant:", e)
+    # def delete(self):
+    #     try:
+    #         with CONN:
+    #             CURSOR.execute(
+    #                 """
+    #                     DELETE FROM plants WHERE id =?;
+    #                 """,
+    #                 (self.id,),
+    #             )
+    #             CONN.commit()
+    #             del type(self).all[self.id]
+    #             self.id = None
+    #     except Exception as e:
+    #         print("We could not delete this plant:", e)

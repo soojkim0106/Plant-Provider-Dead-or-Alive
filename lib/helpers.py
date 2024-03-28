@@ -4,7 +4,7 @@ from models.action import Action
 from seed import start_program
 from rich.console import Console
 import click
-import ipdb
+from time import sleep
 
 console = Console()
 EXIT_WORDS = ["exit", "quit", "c"]
@@ -34,7 +34,8 @@ def menu():
     console.print("Please select an option: ", style="bold underline green on white")
     console.print("1. Start Plant Provider: Dead or Alive")
     console.print("2. View the rules")
-    console.print("3. Exit the program")
+    console.print("3. View plants in store")
+    console.print("4. Exit the program")
 
 
 def exit_program():
@@ -53,14 +54,16 @@ def find_or_create_user():  # sourcery skip: extract-method
         password = input("Enter your password: ").strip()
         new_user = User.create(name, password)
         if new_user is None:
-            console.print("Error creating user: Invalid password. Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character ")
+            console.print(
+                "Error creating user: Invalid username or password. Username must be at least 2 characters. Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character. "
+            )
             return find_or_create_user()
         console.print(f"Welcome {new_user.name}!")
         [picked_plant, picked_plant_id] = pick_plant()
         new_association = Action.create("Water", new_user.id, picked_plant_id)
         console.print(f"Thank you for purchasing your new plant {picked_plant.name}!")
         start_game(new_user, new_association, picked_plant)
-        
+
     else:
         password = input("Enter your password: ").strip()
         if user.authenticate(password):
@@ -79,7 +82,7 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user, new_association, picked_plant):
     while True:
-        # click.clear()
+        click.clear()
         console.print(
             """
                 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣿⢉⣩⠉⣛⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -118,7 +121,7 @@ def start_game(user, new_association, picked_plant):
             exit_program()
 
         if user_input == "1":
-            check_condition(user, new_association, picked_plant)  
+            check_condition(user, new_association, picked_plant)
         elif user_input == "2":
             view_inventory(user)
         elif user_input == "3":
@@ -128,29 +131,32 @@ def start_game(user, new_association, picked_plant):
         elif user_input == "5":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
-            check_condition(user, new_association, re_picked_plant)    
+            check_condition(user, new_association, re_picked_plant)
         elif user_input == "6":
             user = find_or_create_user()
         elif user_input == "7":
             exit_program()
 
-def pick_plant():
-    # click.clear()
-    user_input = input("What's the name of plant you are looking for? ").strip().lower()
-    if user_input in EXIT_WORDS:
-        exit_program()
-    if Plant.find_by_name(user_input):
-        console.print(f"It's time to grow {user_input} ", style="bold")
-        return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
-    else:
-        _ = Plant.create(user_input)
-        console.print("The plant name you mentioned does not exist")
-        console.print(
-            f"As your plant did not already exist, you purchased {user_input}",
-            style="bold",
-        )
-        return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
 
+def pick_plant():  # sourcery skip: hoist-similar-statement-from-if, hoist-statement-from-if
+    click.clear()
+    try:
+        user_input = input("What's the name of plant you are looking for? ").strip().lower()
+        if user_input in EXIT_WORDS:
+            exit_program()
+        if Plant.find_by_name(user_input):
+            console.print(f"It's time to grow {user_input} ", style="bold")
+            return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
+        else:
+            _ = Plant.create(user_input)
+            console.print("The plant name you mentioned does not exist")
+            console.print(
+                f"As your plant did not already exist, you purchased {user_input}",
+                style="bold",
+            )
+            return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
+    except Exception as e:
+        print("Failed to name plant:", e)
 
 def check_condition(user, new_association, picked_plant):
     if new_association is None:
@@ -182,6 +188,7 @@ def check_condition(user, new_association, picked_plant):
             console.print(
                 f"[bold red]Plant {new_association.plant().name} is no longer alive."
             )
+            sleep(1.5)
             break
         if plant.phase == "Flower":
             console.print(
@@ -211,6 +218,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
             console.print(
                 f"[bold green]The {new_association.plant().name} is fully grown and produced a seed!!!"
             )
+            sleep(1.5)
             break
         # click.clear()
         console.print(
@@ -237,11 +245,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
         if selected_condition in ["Status"]:
             console.print(f"{new_association.plant()}")
 
-        while selected_condition not in [
-            "Water",
-            "Sunlight",
-            "Nothing"
-        ]:
+        while selected_condition not in ["Water", "Sunlight", "Nothing"]:
             console.print("Please pick one of the provided options!", style="bold")
             selected_condition = input("What does your plant need?: ").capitalize()
 
@@ -329,11 +333,22 @@ def delete_user():
         console.print("Find yourself or create a new user!", style="bold")
         find_or_create_user()
 
+
 def view_inventory(user):
     inventory = user.plants()
     console.print(f"You currently own these plant(s): {inventory}")
 
+
 def update_password(user):
     new_password = input("Enter your new password: ").strip()
     user.update_password(new_password)
-    console.print(f"Your password has been updated.")
+    console.print("Your password has been updated.")
+
+
+def view_plants():
+    click.clear()
+    console.print("Currently, the store has these plants: ", style='bold')
+    for plant in Plant.get_all():
+        console.print(plant.name, style="green")
+    
+    console.print("If the plant you want is not in stock, fear not, we will ship it to you right away")
