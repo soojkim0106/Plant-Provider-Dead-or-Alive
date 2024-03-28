@@ -50,24 +50,31 @@ def find_or_create_user():  # sourcery skip: extract-method
 
     user = User.find_by_name(name)
     if user is None:
-        new_user = User.create(name)
+        password = input("Enter your password: ").strip()
+        new_user = User.create(name, password)
+        if new_user is None:
+            console.print("Error creating user: Invalid password")
+            return find_or_create_user()
         console.print(f"Welcome {new_user.name}!")
         [picked_plant, picked_plant_id] = pick_plant()
         new_association = Action.create("Water", new_user.id, picked_plant_id)
         console.print(f"Thank you for purchasing your new plant {picked_plant.name}!")
-        start_game(new_user, new_association, picked_plant)  
-        return new_user
+        start_game(new_user, new_association, picked_plant)
+        
     else:
-        [picked_plant, picked_plant_id] = pick_plant()
-        #
-        console.print(
-            f"Welcome back {user.name}! Your plant {picked_plant.name} waiting for you!",
-            style="bold",
-        )
-        new_association = Action.create("Purchase", user.id, picked_plant_id)
-        # retrieve plants information
-        start_game(user, new_association, picked_plant)
-        return user
+        password = input("Enter your password: ").strip()
+        if user.authenticate(password):
+            [picked_plant, picked_plant_id] = pick_plant()
+            console.print(
+                f"Welcome back {user.name}! Your plant {picked_plant.name} waiting for you!",
+                style="bold",
+            )
+            new_association = Action.create("Purchase", user.id, picked_plant_id)
+            start_game(user, new_association, picked_plant)
+            return user
+        else:
+            console.print("Invalid password", style="bold red")
+            return find_or_create_user()
 
 
 def start_game(user, new_association, picked_plant):
@@ -100,9 +107,10 @@ def start_game(user, new_association, picked_plant):
         console.print(f"1. Take care of the [underline]{picked_plant.name}")
         console.print("2. View your plants")
         console.print("3. Delete User")
-        console.print("4. Plant died or is a flower? Select or purchase another!")
-        console.print("5. Switch user")
-        console.print("6. Exit out of program")
+        console.print("4. Update Password")
+        console.print("5. Plant died or is a flower? Select or purchase another!")
+        console.print("6. Switch user")
+        console.print("7. Exit out of program")
 
         user_input = input("> ").strip().lower()
 
@@ -116,12 +124,14 @@ def start_game(user, new_association, picked_plant):
         elif user_input == "3":
             delete_user()
         elif user_input == "4":
+            update_password(user)
+        elif user_input == "5":
             [re_picked_plant, re_picked_plant_id] = pick_plant()
             new_association = Action.create("Purchase", user.id, re_picked_plant_id)
             check_condition(user, new_association, re_picked_plant)    
-        elif user_input == "5":
-            user = find_or_create_user()
         elif user_input == "6":
+            user = find_or_create_user()
+        elif user_input == "7":
             exit_program()
 
 def pick_plant():
@@ -322,3 +332,8 @@ def delete_user():
 def view_inventory(user):
     inventory = user.plants()
     console.print(inventory)
+
+def update_password(user):
+    new_password = input("Enter your new password: ").strip()
+    user.update_password(new_password)
+    console.print(f"Your password has been updated.")
