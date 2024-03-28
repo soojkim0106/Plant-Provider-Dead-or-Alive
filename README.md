@@ -29,7 +29,7 @@ If you wish to exit out of the program, please select **option 3**.<br>
 You will be prompted to enter your username. Please make sure that your username is longer than two characters!
 Once you create your username, you will be prompted to give us the name of the plant you are looking for. Fear not if you haven't purchased a plant yet! We will do that for you!
 
-![](/images/game_menu.png)
+![](/images/updated_game_menu.png)
 
 You are given the option to take care of the current plant, view all the plants you currently own (dead or alive), delete yourself if wanted, purchase another plant, switch out of user, and exit the program.
 
