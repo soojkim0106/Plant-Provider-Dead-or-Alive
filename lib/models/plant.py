@@ -1,7 +1,6 @@
 from models.__init__ import CONN, CURSOR
 from sqlite3 import IntegrityError
 import random
-# import ipdb
 
 
 class Plant:
@@ -21,7 +20,6 @@ class Plant:
         self._condition = (
             condition if condition == "Planted" else self.random_condition()
         )
-        # self._condition = condition
         self._phase = phase
         self.is_alive = is_alive
         self.id = id
@@ -49,7 +47,7 @@ class Plant:
         return self._phase
 
     @phase.setter
-    def phase(self, phase):  # updating seed phase
+    def phase(self, phase):
         if phase not in type(self).phases:
             raise TypeError("Phase must be one of the following in the list")
         else:
@@ -257,18 +255,3 @@ class Plant:
             return self
         except Exception as e:
             print("Error updating plant:", e)
-
-    # def delete(self):
-    #     try:
-    #         with CONN:
-    #             CURSOR.execute(
-    #                 """
-    #                     DELETE FROM plants WHERE id =?;
-    #                 """,
-    #                 (self.id,),
-    #             )
-    #             CONN.commit()
-    #             del type(self).all[self.id]
-    #             self.id = None
-    #     except Exception as e:
-    #         print("We could not delete this plant:", e)

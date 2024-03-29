@@ -1,5 +1,4 @@
 ##! Entry Point
-#! How our menu should look like
 from helpers import(
     welcome,
     menu,

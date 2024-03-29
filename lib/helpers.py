@@ -5,7 +5,6 @@ from seed import start_program
 from rich.console import Console
 import click
 from time import sleep
-import os
 
 console = Console()
 EXIT_WORDS = ["exit", "quit", "c"]
@@ -15,7 +14,6 @@ def welcome():
     click.clear()
     console.rule("[bold green]Plantsy: Dead or Alive :seedling:")
     start_program()
-
 
 def menu():
     console.print(
@@ -91,7 +89,6 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user, new_association, picked_plant):
     while True:
-        click.clear()
         console.print(
             """
                 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣿⢉⣩⠉⣛⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -112,7 +109,7 @@ def start_game(user, new_association, picked_plant):
             """,
             style="green",
         )
-        sleep(.5)
+
         console.print(
             "Please select one of the options below: ",
             style="bold underline green on white",
@@ -148,7 +145,7 @@ def start_game(user, new_association, picked_plant):
             exit_program()
 
 
-def pick_plant():  # sourcery skip: hoist-similar-statement-from-if, hoist-statement-from-if
+def pick_plant(): 
     click.clear()
     try:
         user_input = input("What's the name of plant you are looking for? ").strip().lower()
@@ -235,7 +232,6 @@ _\.\/|   /'--'oOOOOOOo'--'"
             )
             sleep(1.5)
             break
-        # click.clear()
         console.print(
             "Your plant is in need of something! What does it need?",
             style="bold underline green on white",
@@ -290,8 +286,6 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 f"You selected the correct condition! Your plant is now a {new_association.plant().phase}",
                 style="bold yellow",
             )
-            # click.clear()
-            # sleep(1.5)
         else:
             console.print(
                 """
@@ -318,8 +312,6 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}",
                 style="bold yellow",
             )
-            # click.clear()
-            # sleep(1.5)
 
 def view_rules():
     welcome()
@@ -352,7 +344,6 @@ def view_inventory(user):
     inventory = user.plants()
     console.print(f"You currently own these plant(s): {inventory}")
 
-
 def update_password(user):
     new_password = input("Enter your new password: ").strip()
     user.update_password(new_password)
@@ -360,7 +351,6 @@ def update_password(user):
 
 
 def view_plants():
-    click.clear()
     console.print("Currently, our store has these plants: ", style='bold')
     for plant in Plant.get_all():
         console.print(plant.name, style="green")

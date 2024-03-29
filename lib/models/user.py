@@ -29,7 +29,6 @@ class User:
                 print('Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character')
                 return None
             else:
-                # Hash the password before storing it
                 hashed_password, salt = self.hash_password(new_password)
                 self._password = hashed_password
                 self._salt = salt
@@ -80,8 +79,6 @@ class User:
                 return [Action(row[1], row[2], row[3], row[4], row[5], row[6], row[0]) for row in rows]
         except Exception as e:
             print("Error fetching user's action:", e)
-
-    # actions do SELECT to associate user with the Action it is taking and then it will know which plant it has
 
     #! ORM class methods
     @classmethod
@@ -137,20 +134,6 @@ class User:
             return user
         except Exception as e:
             print("Error fetching user from database:", e)
-
-    # @classmethod
-    # def get_all(cls):
-    #     try:
-    #         with CONN:
-    #             CURSOR.execute(
-    #                 """
-    #                     SELECT * FROM users;
-    #                 """
-    #             )
-    #             rows = CURSOR.fetchall()
-    #             return [cls.instance_from_db(row) for row in rows]
-    #     except Exception as e:
-    #         print("Error fetching all users:", e)
 
     @classmethod
     def find_by_name(cls, name):
@@ -262,8 +245,6 @@ class User:
         else:
             return False
 
-    # def hash_password(self, password):
-    #     return hashlib.sha256(password.encode()).hexdigest()
     def hash_password(self, password, salt=None):
         if salt is None:
             salt = secrets.token_hex(16) 
