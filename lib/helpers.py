@@ -5,6 +5,7 @@ from seed import start_program
 from rich.console import Console
 import click
 from time import sleep
+import os
 
 console = Console()
 EXIT_WORDS = ["exit", "quit", "c"]
@@ -60,6 +61,8 @@ def find_or_create_user():  # sourcery skip: extract-method
                 "Error creating user: Invalid username or password. Username must be at least 2 characters. Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character. "
             )
             return find_or_create_user()
+        console.print("User authentication successful!", style="bold green")
+        sleep(1.5)
         console.print(f"Welcome {new_user.name}!")
         [picked_plant, picked_plant_id] = pick_plant()
         new_association = Action.create("Water", new_user.id, picked_plant_id)
@@ -69,6 +72,8 @@ def find_or_create_user():  # sourcery skip: extract-method
     else:
         password = input("Enter your password: ").strip()
         if user.authenticate(password):
+            console.print("User authentication successful!", style="bold green")
+            sleep(1.5)
             [picked_plant, picked_plant_id] = pick_plant()
             console.print(
                 f"Welcome back {user.name}! Your plant {picked_plant.name} waiting for you!",
@@ -84,7 +89,7 @@ def find_or_create_user():  # sourcery skip: extract-method
 
 def start_game(user, new_association, picked_plant):
     while True:
-        # click.clear()
+        click.clear()
         console.print(
             """
                 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⢿⣿⣿⣿⣿⢉⣩⠉⣛⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -105,6 +110,7 @@ def start_game(user, new_association, picked_plant):
             """,
             style="green",
         )
+        sleep(.5)
         console.print(
             "Please select one of the options below: ",
             style="bold underline green on white",
@@ -148,6 +154,7 @@ def pick_plant():  # sourcery skip: hoist-similar-statement-from-if, hoist-state
             exit_program()
         if Plant.find_by_name(user_input):
             console.print(f"It's time to grow {user_input} ", style="bold")
+            sleep(1.5)
             return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
         else:
             _ = Plant.create(user_input)
@@ -156,11 +163,15 @@ def pick_plant():  # sourcery skip: hoist-similar-statement-from-if, hoist-state
                 f"As your plant did not already exist, you purchased {user_input}",
                 style="bold",
             )
+            sleep(2.35)
             return [Plant.find_by_name(user_input), Plant.find_by_name(user_input).id]
     except Exception as e:
         print("Failed to name plant:", e)
+        
 
 def check_condition(user, new_association, picked_plant):
+    sleep(.5)
+    click.clear()
     if new_association is None:
         console.print("Error: new_association is not initialized.", style="bold red")
         return
@@ -277,6 +288,8 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 f"You selected the correct condition! Your plant is now a {new_association.plant().phase}",
                 style="bold yellow",
             )
+            # click.clear()
+            # sleep(1.5)
         else:
             console.print(
                 """
@@ -303,6 +316,8 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 f"You selected the wrong condition! Your plant is still a {new_association.plant().phase}",
                 style="bold yellow",
             )
+            # click.clear()
+            # sleep(1.5)
 
 def view_rules():
     welcome()
