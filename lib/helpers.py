@@ -12,7 +12,7 @@ EXIT_WORDS = ["exit", "quit", "c"]
 
 def welcome():
     click.clear()
-    console.rule("[bold green]Plant Provider: Dead or Alive :seedling:")
+    console.rule("[bold green]Plantsy: Dead or Alive :seedling:")
     start_program()
 
 
@@ -32,7 +32,7 @@ def menu():
         style="yellow",
     )
     console.print("Please select an option: ", style="bold underline green on white")
-    console.print("1. Start Plant Provider: Dead or Alive")
+    console.print("1. Start Plantsy: Dead or Alive")
     console.print("2. View the rules")
     console.print("3. View plants in store")
     console.print("4. Exit the program")
@@ -228,7 +228,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
         console.print("1. Does it need moisture? Type: [underline blue]Water[/]")
         console.print("2. Does it need sunlight? Type: [underline yellow]Sunlight[/]")
         console.print(
-            "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]!"
+            "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]"
         )
         console.print("4. Return to the user menu. Type: [underline]Back[/]!")
         selected_condition = input("What does your plant need?: ").capitalize()
@@ -300,14 +300,13 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 style="bold yellow",
             )
 
-
 def view_rules():
     welcome()
     console.print("Your goal is to grow your plant to the fullest.")
     console.print("Here are the basic instructions:")
-    console.print("1. Your plant will decide on what it is required to grow.")
+    console.print("1. Your plant will decide on what is required for it to grow.")
     console.print(
-        "2. You must guess the correct demand that the plant wants in 3 days."
+        "2. You must guess the correct demand that the plant wants in 4 days(turns). Each phase of a plants life (Purchased, Seed, Bud, Sapling, Flower) will have a new 4-day cycle."
     )
     console.print("3. If you do not guess within the given days, your plant will die.")
     console.print(
