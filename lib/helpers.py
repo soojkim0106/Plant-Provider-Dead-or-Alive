@@ -300,14 +300,13 @@ _\.\/|   /'--'oOOOOOOo'--'"
                 style="bold yellow",
             )
 
-
 def view_rules():
     welcome()
     console.print("Your goal is to grow your plant to the fullest.")
     console.print("Here are the basic instructions:")
     console.print("1. Your plant will decide on what is required for it to grow.")
     console.print(
-        "2. You must guess the correct demand that the plant wants in 3 days. Each phase of a plants life (Purchased, Seed, Bud, Sapling, Flower) will have a new 3-day cycle."
+        "2. You must guess the correct demand that the plant wants in 4 days. Each phase of a plants life (Purchased, Seed, Bud, Sapling, Flower) will have a new 4-day cycle."
     )
     console.print("3. If you do not guess within the given days, your plant will die.")
     console.print(
