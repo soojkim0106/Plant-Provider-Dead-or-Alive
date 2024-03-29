@@ -228,7 +228,7 @@ _\.\/|   /'--'oOOOOOOo'--'"
         console.print("1. Does it need moisture? Type: [underline blue]Water[/]")
         console.print("2. Does it need sunlight? Type: [underline yellow]Sunlight[/]")
         console.print(
-            "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]!"
+            "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]"
         )
         console.print("4. Return to the user menu. Type: [underline]Back[/]!")
         selected_condition = input("What does your plant need?: ").capitalize()
@@ -305,9 +305,9 @@ def view_rules():
     welcome()
     console.print("Your goal is to grow your plant to the fullest.")
     console.print("Here are the basic instructions:")
-    console.print("1. Your plant will decide on what it is required to grow.")
+    console.print("1. Your plant will decide on what is required for it to grow.")
     console.print(
-        "2. You must guess the correct demand that the plant wants in 3 days."
+        "2. You must guess the correct demand that the plant wants in 3 days. Each phase of a plants life (Purchased, Seed, Bud, Sapling, Flower) will have a new 3-day cycle."
     )
     console.print("3. If you do not guess within the given days, your plant will die.")
     console.print(
