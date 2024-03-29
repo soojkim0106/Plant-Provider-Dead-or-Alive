@@ -52,6 +52,8 @@ def find_or_create_user():  # sourcery skip: extract-method
     user = User.find_by_name(name)
     if user is None:
         password = input("Enter your password: ").strip()
+        if password.lower() in EXIT_WORDS:
+            exit_program()
         new_user = User.create(name, password)
         if new_user is None:
             console.print(
@@ -231,13 +233,15 @@ _\.\/|   /'--'oOOOOOOo'--'"
             "3. Your plant might be satisfied as is! Type: [underline red]Nothing[/]"
         )
         console.print("4. Return to the user menu. Type: [underline]Back[/]!")
-        selected_condition = input("What does your plant need?: ").capitalize()
+        selected_condition = input("What does your plant need?: ")
 
-        if selected_condition in EXIT_WORDS:
+        if selected_condition.lower() in EXIT_WORDS:
             exit_program()
 
-        if selected_condition in ["Back"]:
+        if selected_condition.lower() == "back":
             start_game(user, new_association, picked_plant)
+
+        selected_condition = selected_condition.capitalize()
 
         while selected_condition not in ["Water", "Sunlight", "Nothing"]:
             console.print("Please pick one of the provided options!", style="bold")

@@ -24,15 +24,17 @@ class User:
 
     @password.setter
     def password(self, new_password):
-        if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', new_password):
-            print('Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character')
-            return None
+        if not self.password_is_hashed:
+            if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', new_password):
+                print('Password must be 8 characters long and contain at least one digit, one uppercase letter, one lowercase letter and one special character')
+                return None
+            else:
+                # Hash the password before storing it
+                hashed_password, salt = self.hash_password(new_password)
+                self._password = hashed_password
+                self._salt = salt
         else:
-            # Hash the password before storing it
-            self._password = (
-                new_password
-                if self.password_is_hashed
-                else hashlib.sha256(new_password.encode()).hexdigest())
+            self._password = new_password
 
 
     @property
@@ -91,7 +93,8 @@ class User:
                         CREATE TABLE IF NOT EXISTS users (
                             id INTEGER PRIMARY KEY,
                             name TEXT,
-                            password TEXT
+                            password TEXT,
+                            salt TEXT
                         );
                     """
                 )
@@ -129,6 +132,7 @@ class User:
     def instance_from_db(cls, row):
         try:
             user = cls(row[1], row[2], row[0], password_is_hashed=True)
+            user._salt = row[3]  # Assuming salt is the 4th column in your table
             cls.all[user.id] = user
             return user
         except Exception as e:
@@ -197,15 +201,14 @@ class User:
     #! ORM instance method
 
     def save(self): 
-        # hashed_password = hashlib.sha256(self.password.encode()).hexdigest()
         try:
             with CONN:
                 CURSOR.execute(
                     """
-                        INSERT INTO users (name, password)
-                        VALUES (?, ?);
+                        INSERT INTO users (name, password, salt)
+                        VALUES (?, ?, ?);
                     """,
-                    (self.name, self.password),
+                    (self.name, self._password, self._salt),
                 )
                 CONN.commit()
                 self.id = CURSOR.lastrowid
@@ -233,38 +236,36 @@ class User:
             print("We could not delete this user:", e)
 
     def update_password(self, new_password):
-        hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+        hashed_password, salt = self.hash_password(new_password)
         try:
             with CONN:
                 CURSOR.execute(
                     """
                         UPDATE users
-                        SET password = ?
+                        SET password = ?, salt = ?
                         WHERE id = ?;
                     """,
-                    (hashed_password, self.id),
+                    (hashed_password, salt, self.id),
                 )
                 CONN.commit()
-                self.password = hashed_password
+                self._password = hashed_password
+                self._salt = salt
                 self.password_is_hashed = True
 
         except Exception as e:
             print("Error updating password:", e)
 
     def authenticate(self, password):
-
-        if hasattr(self, "_password"):
-            hashed_password = hashlib.sha256(password.encode()).hexdigest()
-            return self.password == hashed_password
+        if hasattr(self, "_password") and hasattr(self, "_salt"):
+            hashed_password = self.hash_password(password, self._salt)[0]
+            return self._password == hashed_password
         else:
             return False
 
     # def hash_password(self, password):
     #     return hashlib.sha256(password.encode()).hexdigest()
-
     def hash_password(self, password, salt=None):
         if salt is None:
             salt = secrets.token_hex(16) 
         hashed_password = hashlib.sha256((password + salt).encode()).hexdigest()
-
         return hashed_password, salt
