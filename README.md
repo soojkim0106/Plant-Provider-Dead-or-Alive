@@ -1,7 +1,7 @@
-# Plant Provider: Dead or Alive
+# Plantsy: Dead or Alive
 
 Does having plant sound awesome to you, but you just can't seem to keep it alive? Well we got a program just for you!
-Test our your green thumb with our Plant Provider: Dead or Alive!
+Test our your green thumb with our Plantsy: Dead or Alive!
 
 ## Installation and Starting Programming
 
