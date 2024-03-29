@@ -52,6 +52,7 @@ def find_or_create_user():  # sourcery skip: extract-method
 
     user = User.find_by_name(name)
     if user is None:
+        console.print("Username does not exist: enter password to register user", style="bold green")
         password = input("Enter your password: ").strip()
         if password.lower() in EXIT_WORDS:
             exit_program()
@@ -70,6 +71,7 @@ def find_or_create_user():  # sourcery skip: extract-method
         start_game(new_user, new_association, picked_plant)
 
     else:
+        console.print("Username authentication successful!", style="bold green")
         password = input("Enter your password: ").strip()
         if user.authenticate(password):
             console.print("User authentication successful!", style="bold green")
